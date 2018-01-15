@@ -4,28 +4,35 @@
 #include "helpers/MyStrings.h"
 #include "GraphStoreInputHandler.h"
 
-// ------------------- FILE METHODS --------------------------
-bool GraphStoreInputHandler::open(const char* path) {
-	file.open(path);
-	if(file.fail()) {
-		std::cout<< "opening file failed"<< std::endl;
-		file.clear();
-		return false;
-	}
-	currFilePath = new char[strlen(path)];
-	strcpy(currFilePath, path);
-	fileOpened = true;
-	std::cout<< "file opened"<< std::endl;
-	return true;
+// ------------------- GRAPHSTORE METHODS --------------------------
+bool GraphStoreInputHandler::createGraph(const char* arguments) {
+	// get id and directed?
+	// call graph store function (new file if not existing (all graphs could be separate files))
+}
+bool GraphStoreInputHandler::useGraph(const char* path) {
+	// graph store function - open the file of the corresponding graph (false if doesn't exist)
+}
+bool GraphStoreInputHandler::deleteGraph(const char* id) {
+	// graph store function - delete graph with this id (false if doesn't exist)
 }
 
-void GraphStoreInputHandler::close() {
-	if(fileOpened) {
-		file.close();
-		std::cout<< "file closed successfully"<< std::endl;
-	}
-	fileOpened = false;
-	std::cout<< "no file opened"<< std::endl;
+bool GraphStoreInputHandler::createNode(const char* arguments) {
+	// function to separate first, second id
+	// graph store function - create node with first, second id and weight
+	// false if no used graph
+}
+bool GraphStoreInputHandler::deleteNode(const char* id) {
+	// gs function - delete node with id, false if no opened graph
+}
+
+bool GraphStoreInputHandler::createArc(const char* arguments) {
+	// separate first, second id and weight?
+	// gs function - create arc with ids, false if no opened graph
+	// false if no used graph
+}
+bool GraphStoreInputHandler::deleteArc(const char* id) {
+	// delete arc with weight
+	// false if no used graph
 }
 
 void GraphStoreInputHandler::exit() {
@@ -33,17 +40,27 @@ void GraphStoreInputHandler::exit() {
 }
 
 // ------------- CONSOLE INTERPRETATION METHODS --------------
-bool GraphStoreInputHandler::interpretInput(const char* command, const char* arguments) {
-	if(strcmp(command, "open") == 0) {
-		open(arguments + sizeof(char));
-	} else if(strcmp(command, "close") == 0) {
-		close();
-	} else if(strcmp(command, "exit") == 0) {
+bool GraphStoreInputHandler::interpretInput(const char* commandVerb, const char* commandSubject, const char* arguments) {
+	if(strcmp(commandVerb, "CREATE") == 0) {
+		if(strcmp(commandSubject, "GRAPH") == 0) {
+			createGraph(arguments);
+		} else if(strcmp(commandSubject, "NODE") == 0) {
+			createNode(arguments);
+		} else if(strcmp(commandSubject, "ARC") == 0) {
+			createArc(arguments);
+		}
+	} else if(strcmp(commandVerb, "DELETE") == 0) {
+		if(strcmp(commandSubject, "GRAPH") == 0) {
+			deleteGraph(arguments);
+		} else if(strcmp(commandSubject, "NODE") == 0) {
+			deleteNode(arguments);
+		}
+	} else if(strcmp(commandVerb, "USE") == 0) {
+		if(strcmp(commandSubject, "GRAPH") == 0) {
+			useGraph(arguments);
+		}
+	} else if(strcmp(commandVerb, "QUIT") == 0) {
 		exit();
-	} else if(strcmp(command, "save") == 0) {
-		save();
-	} else if(strcmp(command, "saveas") == 0) {
-		saveas(arguments + sizeof(char));
 	} else {
 		return false;
 	}
@@ -52,19 +69,23 @@ bool GraphStoreInputHandler::interpretInput(const char* command, const char* arg
 
 void GraphStoreInputHandler::startGettingInput() {
 	gettingInput = true;
-	char command[6];
+	char commandVerb[8]; // if we get say DELETES the extra char will catch the 'S'
+	char commandSubject[7];
 	char arguments[512];
 	while(gettingInput) {
-		std::cin>> command;
+		std::cin>> commandVerb;
+		if(strlen(commandVerb) <= 6 && std::cin.peek() == ' ') {
+			std::cin>> commandSubject;
+		}
 		std::cin.getline(arguments, 511);
-		if(!interpretInput(command, arguments)) {
-			std::cout<< "\""<< command<< "\" is an invalid command\n";
+		if(!interpretInput(commandVerb, commandSubject, arguments)) {
+			std::cout<< "\""<< commandVerb<< " " << commandSubject<< "\" is an invalid command\n";
 		}
 	}
 }
 
 // ------------- CONSTRUCTOR AND DESTRUCTOR -----------------
 GraphStoreInputHandler::GraphStoreInputHandler(const char* pathToGraphStoreFolder) {
-	
+	// graph store initialization
 }
 

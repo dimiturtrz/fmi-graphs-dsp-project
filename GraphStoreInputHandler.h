@@ -3,24 +3,25 @@
 
 class GraphStoreInputHandler {
 private:
-	static const char* graphStoreFileName = "graphStore.txt";
-	std::fstream file;
 	bool gettingInput;
-	bool fileOpened;
 
-	bool interpretInput(const char* command, const char* arguments);
+	bool interpretInput(const char* commandVerb, const char* commandSubject, const char* arguments);
 
-	bool open(const char* path);
-	void close();
-	bool save();
-	bool saveas(const char* path);
+	bool createGraph(const char* arguments);
+	bool useGraph(const char* path);
+	bool deleteGraph(const char* id);
+
+	bool createNode(const char* arguments);
+	bool deleteNode(const char* id);
+
+	bool createArc(const char* arguments);
+	bool deleteArc(const char* id);
+
 	void exit();
 public:
 	void startGettingInput();
 	bool isValidFolder();
 	GraphStoreInputHandler(const char* pathToGraphStoreFolder);
-	// destructor to make sure the file is closed
-	~GraphStoreInputHandler(); 
 };
 
 #endif
