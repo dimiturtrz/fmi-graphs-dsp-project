@@ -31,6 +31,20 @@ int strcmp(const char* str1, const char* str2, char stopSymbol) {
 const char* getNextWordStart(const char* str) {
 	int offset = 0;
 	while(str[offset] != '\0' && str[offset++] != ' ');
-	while(str[offset] != '\0' && str[offset++] == ' ');
+	while(str[offset++] != '\0' && str[offset] == ' ');
 	return str + offset - 1;
+}
+
+int getWeightFromWord(const char* wordStart) {
+	int i = 0;
+	if(wordStart[i++] != '[') {
+		return 1;
+	}
+
+	int accum = 0;
+	for(int multiply = 10; wordStart[i] != ']' && wordStart[i] != '\0'; ++i) {
+		accum = accum*multiply + (wordStart[i++] - '0');
+	}
+
+	return accum;
 }

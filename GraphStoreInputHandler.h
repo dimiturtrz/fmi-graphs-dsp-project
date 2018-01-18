@@ -4,8 +4,11 @@
 class GraphStoreInputHandler {
 private:
 	bool gettingInput;
+	char errorMessage[1024];
 
 	bool interpretInput(const char* commandVerb, const char* commandSubject, const char* arguments);
+
+	void generateStandartErrorMessage(const char* commandVerb, const char* commandSubject);
 
 	bool createGraph(const char* arguments);
 	bool useGraph(const char* id);
