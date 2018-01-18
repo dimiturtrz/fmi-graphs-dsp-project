@@ -14,9 +14,9 @@ void strcpy(char* destination, const char* source, char stopSymbol) {
 	destination[i] = '\0';
 }
 
-int strcmp(const char* str1, const char* str2) {
+int strcmp(const char* str1, const char* str2, char stopSymbol) {
 	if(strlen(str1) == strlen(str2)) {
-		for(int i=0; str1[i] != '\0'; i++) {
+		for(int i=0; str1[i] != stopSymbol && str1[i] != '\0'; i++) {
 			if(str1[i] == str2[i]) {
 				continue;
 			} else {
@@ -31,5 +31,6 @@ int strcmp(const char* str1, const char* str2) {
 const char* getNextWordStart(const char* str) {
 	int offset = 0;
 	while(str[offset] != '\0' && str[offset++] != ' ');
-	return str + offset;
+	while(str[offset] != '\0' && str[offset++] == ' ');
+	return str + offset - 1;
 }

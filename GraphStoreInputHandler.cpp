@@ -6,10 +6,22 @@
 
 // ------------------- GRAPHSTORE METHODS --------------------------
 bool GraphStoreInputHandler::createGraph(const char* arguments) {
-	// get id and directed?
+	char* graphId = new char[strlen(arguments, ' ') + 1];
+	strcpy(graphId, arguments, ' ');
+	const char* remainingSubstring = getNextWordStart(arguments);
+	bool validRemainder = *remainingSubstring;
 	// call graph store function (new file if not existing (all graphs could be separate files))
+	if(*remainingSubstring == '\0') {
+		std::cout<< "undirected make\n";
+		// return make undirected graph
+	}
+	if(strcmp(remainingSubstring, "directed", ' ') == 0 && getNextWordStart(remainingSubstring) == '\0') {
+		std::cout<< "directed make\n";
+		// return make directed graph
+	}
+	return false;
 }
-bool GraphStoreInputHandler::useGraph(const char* path) {
+bool GraphStoreInputHandler::useGraph(const char* id) {
 	// graph store function - open the file of the corresponding graph (false if doesn't exist)
 }
 bool GraphStoreInputHandler::deleteGraph(const char* id) {
@@ -31,7 +43,7 @@ bool GraphStoreInputHandler::createArc(const char* arguments) {
 	// false if no used graph
 }
 bool GraphStoreInputHandler::deleteArc(const char* id) {
-	// delete arc with weight
+	// delete arc with id
 	// false if no used graph
 }
 
@@ -72,13 +84,18 @@ void GraphStoreInputHandler::startGettingInput() {
 	char commandVerb[8]; // if we get say DELETES the extra char will catch the 'S'
 	char commandSubject[7];
 	char arguments[512];
+	int argumentOffset = 0;
 	while(gettingInput) {
+        std::cin.clear();
+		commandSubject[0] = '\0';
+
 		std::cin>> commandVerb;
 		if(strlen(commandVerb) <= 6 && std::cin.peek() == ' ') {
 			std::cin>> commandSubject;
 		}
 		std::cin.getline(arguments, 511);
-		if(!interpretInput(commandVerb, commandSubject, arguments)) {
+		for(; arguments[argumentOffset] == ' '; ++argumentOffset);
+		if(!interpretInput(commandVerb, commandSubject, arguments + argumentOffset)) {
 			std::cout<< "\""<< commandVerb<< " " << commandSubject<< "\" is an invalid command\n";
 		}
 	}

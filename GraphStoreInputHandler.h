@@ -8,7 +8,7 @@ private:
 	bool interpretInput(const char* commandVerb, const char* commandSubject, const char* arguments);
 
 	bool createGraph(const char* arguments);
-	bool useGraph(const char* path);
+	bool useGraph(const char* id);
 	bool deleteGraph(const char* id);
 
 	bool createNode(const char* arguments);
