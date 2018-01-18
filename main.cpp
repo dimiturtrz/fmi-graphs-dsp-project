@@ -1,4 +1,5 @@
 #include <iostream>
+#include "helpers/MyStrings.h"
 #include "GraphStoreInputHandler.h"
 
 int main (int argc, char *argv[]) {
@@ -6,5 +7,6 @@ int main (int argc, char *argv[]) {
 
 	GraphStoreInputHandler gsih(pathToGraphStoreFolder);
 	gsih.startGettingInput();
+
 	return 0;
 }

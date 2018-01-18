@@ -4,12 +4,10 @@
 #define MY_STRINGS 
 
 //standart
-int strlen(const char* str);
-void strcpy(char* destination, const char* source);
+int strlen(const char* str, char stopSymbol = '\0');
+void strcpy(char* destination, const char* source, char stopSymbol = '\0');
 int strcmp(const char* str1, const char* str2);
 
-bool isDigit(char ch);
-bool isOperator(char ch);
-bool readGenericInt(const char* str, char endSym, int& intHolder, int* lengthRead);
+const char* getNextWordStart(const char* str);
 
 #endif

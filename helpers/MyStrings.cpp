@@ -1,16 +1,17 @@
 #include "MyStrings.h"
 
-int strlen(const char* str) {
+int strlen(const char* str, char stopSymbol) {
 	int i = 0;
-	for(; str[i] != '\0'; ++i);
+	for(; str[i] != stopSymbol && str[i] != '\0'; ++i);
 	return i;
 }
 
-void strcpy(char* destination, const char* source) {
-	for(int i=0; source[i] != '\0'; i++) {
+void strcpy(char* destination, const char* source, char stopSymbol) {
+	int i = 0;
+	for(; source[i] != stopSymbol && source[i] != '\0'; ++i) {
 		destination[i] = source[i];
 	}
-	destination[strlen(source)] = '\0';
+	destination[i] = '\0';
 }
 
 int strcmp(const char* str1, const char* str2) {
@@ -27,33 +28,8 @@ int strcmp(const char* str1, const char* str2) {
 	return (strlen(str1) > strlen(str2)) ? 1 : -1;
 }
 
-bool isDigit(char ch) {
-	return ch >= '0' && ch <= '9';
-}
-bool isOperator(char ch) {
-	return ch == '+' || ch == '-' || ch == '*' || ch == '/';
-}
-
-bool readGenericInt(const char* str, char endSym, int& intHolder, int* lengthRead) {
-	int i = 0;
-	for(; str[i] == ' '; ++i);
-	bool sign = true;
-	if(str[i] == '-') {
-		++i;
-		sign = false;
-	}
-	int number = 0;
-	for(;str[i] != endSym && str[i] != '\n' && str[i] != '\0'; i++) {
-		if(isDigit(str[i])) {
-			number *= 10;
-			number += str[i] - '0';
-		} else {
-			return false;
-		}
-	}
-	intHolder = number;
-	if(lengthRead != NULL) {
-		*lengthRead = i;
-	}
-	return true;
+const char* getNextWordStart(const char* str) {
+	int offset = 0;
+	while(str[offset] != '\0' && str[offset++] != ' ');
+	return str + offset;
 }
