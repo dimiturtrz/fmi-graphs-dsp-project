@@ -9,7 +9,7 @@ bool GraphStoreInputHandler::createGraph(const char* arguments) {
 	char* graphId = new char[strlen(arguments, ' ') + 1];
 	strcpy(graphId, arguments, ' ');
 	const char* remainingSubstring = getNextWordStart(arguments);
-	// call graph store function (new file if not existing (all graphs could be separate files))
+	// call graph store function (new file if not existing (all graphs could be separate files)
 	if(*remainingSubstring == '\0') {
 		std::cout<< "undirected make\n";
 		// return make undirected graph

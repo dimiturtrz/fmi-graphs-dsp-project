@@ -43,7 +43,7 @@ int getWeightFromWord(const char* wordStart) {
 
 	int accum = 0;
 	for(int multiply = 10; wordStart[i] != ']' && wordStart[i] != '\0'; ++i) {
-		accum = accum*multiply + (wordStart[i++] - '0');
+		accum = accum*multiply + (wordStart[i] - '0');
 	}
 
 	return accum;
