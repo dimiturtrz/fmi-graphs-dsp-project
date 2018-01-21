@@ -1,3 +1,5 @@
+#include <iostream>
+
 #ifndef TRENARY_SEARCH_TREE_H
 #define TRENARY_SEARCH_TREE_H
 

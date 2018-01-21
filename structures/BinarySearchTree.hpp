@@ -37,7 +37,7 @@ void BinarySearchTree<T>::clearSubtree(Node*& currRoot) {
 template<typename T>
 void BinarySearchTree<T>::copy(const BinarySearchTree& other) {
 	clear();
-	copySubtree(other.root);
+	copySubtree(root, other.root);
 }
 
 template<typename T>
@@ -63,7 +63,7 @@ template<typename T>
 BinarySearchTree<T>::BinarySearchTree(): root(NULL) {}
 
 template<typename T>
-BinarySearchTree<T>::BinarySearchTree(const BinarySearchTree& other) {
+BinarySearchTree<T>::BinarySearchTree(const BinarySearchTree& other): root(NULL) {
 	copy(other);
 }
 
