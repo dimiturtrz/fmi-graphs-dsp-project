@@ -5,12 +5,14 @@
 
 class Graph {
 	char id[50];
+	bool directed;
 
 	void clear();
 	void copy(const Graph& other);
+	void readFromFile(const char* path);
 
 public:
-	Graph(const char* graphId);
+	Graph(char* storePath, const char* graphId);
 	Graph(const Graph& other);
 	Graph& operator=(const Graph& other);
 	~Graph();

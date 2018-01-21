@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <stdio.h> // only for file removal
+
 #include "helpers/MyStrings.h"
 #include "GraphStore.h"
 
@@ -23,8 +25,10 @@ bool GraphStore::isUsingGraph() {
 bool GraphStore::graphExists(const char* graphId) {
 	appendComponentToPath(storePath, graphId);
 	std::ifstream graphFile(storePath);
+	bool fileOpened = graphFile;
+	graphFile.close();
 	removeLastComponentFromPath(storePath);
-	return graphFile;
+	return fileOpened;
 }
 	
 bool GraphStore::nodeExists(const char* nodeId) {
@@ -65,15 +69,31 @@ GraphStore::~GraphStore() {
 // --------------------------- GRAPH METHODS ----------------------------
 
 void GraphStore::createGraph(const char* newGraphId, bool directed) {
-	return ; // TODO: do
+	if(graphExists(newGraphId)) {
+		return;
+	}
+
+	std::ofstream outfile(newGraphId);
+	outfile<< (directed ? 1 : 0)<< std::endl;
+	outfile.close();
 }
 
 void GraphStore::useGraph(const char* existingGraphId) {
-	return ; // TODO: do
+	if(!graphExists(existingGraphId)) {
+		return;
+	}
+
+	graph = new Graph(storePath, existingGraphId);
 }
 
 void GraphStore::deleteGraph(const char* existingGraphId) {
-	return ; // TODO: do
+	if(!graphExists(existingGraphId)) {
+		return;
+	}
+
+	appendComponentToPath(storePath, existingGraphId);
+	remove(storePath);
+	removeLastComponentFromPath(storePath);
 }
 
 // ---------------------------- NODE METHODS -----------------------------

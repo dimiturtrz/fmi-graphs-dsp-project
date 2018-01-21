@@ -4,14 +4,23 @@
 // ------------------------ BIG FOUR HELPERS ----------------------
 
 void Graph::clear() {}
+
 void Graph::copy(const Graph& other) {
 	strcpy(id, other.id);
 }
 
+void Graph::readFromFile(const char* path) {
+	
+}
+
 // --------------------------- BIG FOUR ---------------------------
 
-Graph::Graph(const char* graphId) {
+Graph::Graph(char* storePath, const char* graphId) {
 	strcpy(id, graphId);
+	
+	appendComponentToPath(storePath, graphId);
+	readFromFile(storePath);
+	removeLastComponentFromPath(storePath);
 }
 Graph::Graph(const Graph& other) {
 	copy(other);
