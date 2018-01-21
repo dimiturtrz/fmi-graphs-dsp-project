@@ -3,6 +3,7 @@
 
 #include "helpers/MyStrings.h"
 #include "Graph.h"
+#include "Node.h"
 
 // ------------------------ BIG FOUR HELPERS ----------------------
 
@@ -10,6 +11,8 @@ void Graph::clear() {}
 
 void Graph::copy(const Graph& other) {
 	strcpy(id, other.id);
+	directed = other.directed;
+	nodes = other.nodes;
 }
 
 // --------------------------- BIG FOUR ---------------------------
@@ -26,7 +29,9 @@ Graph& Graph::operator=(const Graph& other) {
 	}
 	return *this;
 }
-Graph::~Graph() {}
+Graph::~Graph() {
+	clear();
+}
 
 // ------------------------- FILE OPERATIONS ----------------------
 
@@ -34,6 +39,8 @@ void Graph::readFromFile(const char* path) {
 	if(path == NULL) {
 		return;
 	}
+
+	clear();
 
 	char buff[1024];
 	std::ifstream inputGraphFile(path);
@@ -45,6 +52,12 @@ void Graph::readFromFile(const char* path) {
 }
 
 void Graph::writeToFile(const char* path) {
+	if(path == NULL) {
+		return;
+	}
+
+	clear();
+
 	std::ofstream outputGraphFile(path);
 
 	outputGraphFile<< directed<< std::endl;
@@ -55,7 +68,7 @@ void Graph::writeToFile(const char* path) {
 // ------------------------ OTHER METHODS -------------------------
 
 bool Graph::hasNode(const char* nodeId) {
-	return true; // TODO do
+	return (nodes.getElement(nodeId) != NULL);
 }
 
 bool Graph::hasArc(const char* nodeId1, const char* nodeId2) {
@@ -67,3 +80,10 @@ bool Graph::hasArc(const char* nodeId1, const char* nodeId2) {
 const char* Graph::getId() {
 	return id;
 }
+
+// ------------------------- NODE METHODS --------------------------
+
+void Graph::addNode(const char* nodeId) {
+	nodes.add(nodeId, Node());
+}
+

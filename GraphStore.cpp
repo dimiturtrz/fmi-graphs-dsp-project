@@ -119,7 +119,7 @@ void GraphStore::deleteGraph(const char* existingGraphId) {
 // ---------------------------- NODE METHODS -----------------------------
 
 void GraphStore::createNode(const char* newNodeId) {
-	return ; // TODO: do
+	return graph->addNode(newNodeId);
 }
 void GraphStore::deleteNode(const char* existingNodeId) {
 	return ; // TODO: do

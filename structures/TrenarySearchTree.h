@@ -11,8 +11,14 @@ class TrenarySearchTree {
 		char character;
 		T* data;
 
+		void clear();
+		void copy(const Node& other);
+
 	public:
 		Node(char character, T* data = NULL);
+		Node(const Node& other);
+		Node& operator=(const Node& other);
+		~Node();
 	} * root;
 
 	void clear();

@@ -1,9 +1,12 @@
 #include "structures/TrenarySearchTree.h"
 
+#include "Node.h"
+
 #ifndef GRAPH
 #define GRAPH
 
 class Graph {
+	TrenarySearchTree<Node> nodes;
 	char id[50];
 	bool directed;
 
@@ -22,6 +25,8 @@ public:
 	bool hasArc(const char* nodeId1, const char* nodeId2);
 
 	const char* getId();
+
+	void addNode(const char* nodeId);
 };
 
 #endif

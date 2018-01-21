@@ -3,7 +3,45 @@
 // -------------------------------- NODE ------------------------------------
 
 template<typename T>
-TrenarySearchTree<T>::Node::Node(char character, T* data): character(character), data(data) {}
+void TrenarySearchTree<T>::Node::clear() {
+	delete data;
+	data = NULL;
+
+	hi = lo = equal = NULL;
+}
+
+template<typename T>
+void TrenarySearchTree<T>::Node::copy(const TrenarySearchTree<T>::Node& other) {
+	clear();
+	data = (other.data != NULL) ? new T(*(other.data)) : NULL;
+}
+
+// ----------------------------- BIG FOUR
+
+template<typename T>
+TrenarySearchTree<T>::Node::Node(char character, T* data): character(character), data(NULL), hi(NULL), lo(NULL), equal(NULL) {
+	if(data != NULL) {
+		this->data = new T(*data);
+	}
+}
+
+template<typename T>
+TrenarySearchTree<T>::Node::Node(const TrenarySearchTree<T>::Node& other): hi(NULL), lo(NULL), equal(NULL) {
+	copy(other);
+}
+
+template<typename T>
+typename TrenarySearchTree<T>::Node& TrenarySearchTree<T>::Node::operator=(const TrenarySearchTree<T>::Node& other) {
+	if(this != &other) {
+		copy(other);
+	}
+	return* this;
+}
+
+template<typename T>
+TrenarySearchTree<T>::Node::~Node() {
+	delete data;
+}
 
 // -------------------------------- TREE ------------------------------------
 
@@ -11,7 +49,9 @@ TrenarySearchTree<T>::Node::Node(char character, T* data): character(character),
 
 template<typename T>
 void TrenarySearchTree<T>::clear() {
-	clearSubtree(root);
+	if(root != NULL) {
+		clearSubtree(root);
+	}
 }
 
 template<typename T>
@@ -39,21 +79,21 @@ template<typename T>
 void TrenarySearchTree<T>::copy(const TrenarySearchTree& other) {
 	clear();
 	if(other.root != NULL) {
-        copySubtree(other.root);
+        copySubtree(root, other.root);
 	}
 }
 
 template<typename T>
 void TrenarySearchTree<T>::copySubtree(Node*& currRoot, Node* otherCurrRoot) {
 
-	currRoot = new Node(otherCurrRoot->character, otherCurrRoot->data);
+	currRoot = new Node(*otherCurrRoot);
 
-	if(otherCurrRoot->left != NULL) {
-		copySubtree(currRoot->left, otherCurrRoot->left);
+	if(otherCurrRoot->hi != NULL) {
+		copySubtree(currRoot->hi, otherCurrRoot->hi);
 	}
 
-	if(otherCurrRoot->right != NULL) {
-		copySubtree(currRoot->right, otherCurrRoot->right);
+	if(otherCurrRoot->lo != NULL) {
+		copySubtree(currRoot->lo, otherCurrRoot->lo);
 	}
 
 	if(otherCurrRoot->equal != NULL) {
@@ -67,7 +107,7 @@ template<typename T>
 TrenarySearchTree<T>::TrenarySearchTree(): root(NULL) {}
 
 template<typename T>
-TrenarySearchTree<T>::TrenarySearchTree(const TrenarySearchTree& other) {
+TrenarySearchTree<T>::TrenarySearchTree(const TrenarySearchTree& other): root(NULL) {
 	copy(other);
 }
 
