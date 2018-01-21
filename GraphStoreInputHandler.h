@@ -17,11 +17,13 @@ private:
 	bool useGraph(const char* id);
 	bool deleteGraph(const char* id);
 
-	bool createNode(const char* arguments);
+	bool createNode(const char* id);
 	bool deleteNode(const char* id);
 
 	bool createArc(const char* arguments);
-	bool deleteArc(const char* id);
+	bool deleteArc(const char* arguments);
+
+	bool searchPath(const char* arguments);
 
 	void exit();
 public:

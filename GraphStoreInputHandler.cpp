@@ -5,6 +5,9 @@
 #include "GraphStoreInputHandler.h"
 
 // ------------------- GRAPHSTORE METHODS --------------------------
+
+// ------------------- GRAPH METHODS
+
 bool GraphStoreInputHandler::createGraph(const char* arguments) {
 	char* graphId = new char[strlen(arguments, ' ') + 1];
 	strcpy(graphId, arguments, ' ');
@@ -28,6 +31,7 @@ bool GraphStoreInputHandler::createGraph(const char* arguments) {
 	strcpy(errorMessage, "incorrect arguments format");
 	return false;
 }
+
 bool GraphStoreInputHandler::useGraph(const char* id) {
 	if(graphStore.useGraph(id)) {
 		return true;
@@ -36,6 +40,7 @@ bool GraphStoreInputHandler::useGraph(const char* id) {
 		return false;
 	}
 }
+
 bool GraphStoreInputHandler::deleteGraph(const char* id) {
 	if(graphStore.deleteGraph(id)) {
 		return true;
@@ -45,25 +50,51 @@ bool GraphStoreInputHandler::deleteGraph(const char* id) {
 	}
 }
 
-bool GraphStoreInputHandler::createNode(const char* arguments) {
-	// false if no used graph
-	// graph store function - create node with id, false if exists
+// ------------------- NODE METHODS
+
+bool GraphStoreInputHandler::createNode(const char* id) {
+	if(!graphStore.isUsingGraph()) {
+		strcpy(errorMessage, "no used graph");
+		return false;
+	}
+
+	if(graphStore.createNode(id)) {
+		return true;
+	} else {
+		strcpy(errorMessage, "node with that id exists");
+		return false;
+	}
 }
 bool GraphStoreInputHandler::deleteNode(const char* id) {
-	// gs function - delete node with id, false if no opened graph
+	if(!graphStore.isUsingGraph()) {
+		strcpy(errorMessage, "no used graph");
+		return false;
+	}
+	
+	if(graphStore.deleteNode(id)) {
+		return true;
+	} else {
+		strcpy(errorMessage, "node with that id  doesn't exist");
+		return false;
+	}
 }
 
+// ------------------- ARC METHODS
+
 bool GraphStoreInputHandler::createArc(const char* arguments) {
-	// false if no used graph
-	// separate first, second id and weight?
+	if(!graphStore.isUsingGraph()) {
+		strcpy(errorMessage, "no used graph");
+		return false;
+	}
+
 	const char* remainingInput = arguments;
 
-	char* graphId1 = new char[strlen(remainingInput, ' ') + 1];
-	strcpy(graphId1, remainingInput, ' ');
+	char* nodeId1 = new char[strlen(remainingInput, ' ') + 1];
+	strcpy(nodeId1, remainingInput, ' ');
 	remainingInput = getNextWordStart(remainingInput);
 
-	char* graphId2 = new char[strlen(remainingInput, ' ') + 1];
-	strcpy(graphId2, remainingInput, ' ');
+	char* nodeId2 = new char[strlen(remainingInput, ' ') + 1];
+	strcpy(nodeId2, remainingInput, ' ');
 	remainingInput = getNextWordStart(remainingInput);
 
 	char* arcWeightString = new char[strlen(remainingInput, ' ') + 1];
@@ -75,13 +106,78 @@ bool GraphStoreInputHandler::createArc(const char* arguments) {
 		strcpy(errorMessage, "incorrect arguments format");
 		return false;
 	}
-	std::cout<< "creating arc between nodes "<< graphId1<< " and "<< graphId2<< " and with weight "<< arcWeight<< std::endl;
-	// gs function - create arc with id
+	
+	if(graphStore.createArc(nodeId1, nodeId2, arcWeight)) {
+		return true;
+	} else {
+		strcpy(errorMessage, "one or both nodes with that id don't exist");
+		return false;
+	}
 }
-bool GraphStoreInputHandler::deleteArc(const char* id) {
-	// false if no used graph
-	// delete arc with id
+bool GraphStoreInputHandler::deleteArc(const char* arguments) {
+	if(!graphStore.isUsingGraph()) {
+		strcpy(errorMessage, "no used graph");
+		return false;
+	}
+
+	const char* remainingInput = arguments;
+
+	char* nodeId1 = new char[strlen(remainingInput, ' ') + 1];
+	strcpy(nodeId1, remainingInput, ' ');
+	remainingInput = getNextWordStart(remainingInput);
+
+	char* nodeId2 = new char[strlen(remainingInput, ' ') + 1];
+	strcpy(nodeId2, remainingInput, ' ');
+	remainingInput = getNextWordStart(remainingInput);
+
+	if(*remainingInput != '\0') {
+		strcpy(errorMessage, "incorrect arguments format");
+		return false;
+	}
+	
+	if(graphStore.deleteArc(nodeId1, nodeId2)) {
+		return true;
+	} else {
+		strcpy(errorMessage, "one or both nodes with that id (or arc) don't exist");
+		return false;
+	}
 }
+
+// ---------------------------- SEARCH METHODS
+
+bool GraphStoreInputHandler::searchPath(const char* arguments) {
+	
+	const char* remainingInput = arguments;
+
+	char* nodeId1 = new char[strlen(remainingInput, ' ') + 1];
+	strcpy(nodeId1, remainingInput, ' ');
+	remainingInput = getNextWordStart(remainingInput);
+
+	char* nodeId2 = new char[strlen(remainingInput, ' ') + 1];
+	strcpy(nodeId2, remainingInput, ' ');
+	remainingInput = getNextWordStart(remainingInput);
+
+	char* algorithmName = new char[strlen(remainingInput, ' ') + 1];
+	strcpy(algorithmName, remainingInput, ' ');
+	remainingInput = getNextWordStart(remainingInput);
+
+	if(*remainingInput != '\0') {
+		strcpy(errorMessage, "incorrect arguments format");
+		return false;
+	}
+
+	if(strcmp(algorithmName, "bfs") == 0) {
+		
+	} else if(strcmp(algorithmName, "dfs-shortest") == 0) {
+
+	} else if(strcmp(algorithmName, "dfs-longest") == 0) {
+
+	} else if(strcmp(algorithmName, "dijkstra") == 0) {
+
+	}
+}
+
+// ------------------------------ EXIT METHOD
 
 void GraphStoreInputHandler::exit() {
 	gettingInput = false;
@@ -107,6 +203,8 @@ bool GraphStoreInputHandler::interpretInput(const char* commandVerb, const char*
 		if(strcmp(commandSubject, "GRAPH") == 0) {
 			return useGraph(arguments);
 		}
+	} else if(strcmp(commandVerb, "SEARCH") == 0) {
+		return searchPath(arguments);
 	} else if(strcmp(commandVerb, "QUIT") == 0) {
 		exit();
 		return true;
@@ -127,7 +225,9 @@ void GraphStoreInputHandler::startGettingInput() {
 
 		std::cin>> commandVerb;
 		if(strlen(commandVerb) <= 6 && std::cin.peek() == ' ') {
-			std::cin>> commandSubject;
+			if(strcmp(commandVerb, "SEARCH") != 0) {
+				std::cin>> commandSubject;
+			}
 		}
 		std::cin.getline(arguments, 511);
 		for(; arguments[argumentOffset] == ' '; ++argumentOffset);
