@@ -15,6 +15,8 @@ public:
 	~GraphStore();
 
 	bool createGraph(const char* newGraphId, bool directed);
+	bool useGraph(const char* existingGraphId);
+	bool deleteGraph(const char* existingGraphId);
 };
 
 #endif

@@ -31,3 +31,19 @@ GraphStore& GraphStore::operator=(const GraphStore& other) {
 GraphStore::~GraphStore() {
 	clear();
 }
+
+// --------------------------- INPUT METHODS ----------------------------
+
+bool GraphStore::createGraph(const char* newGraphId, bool directed) {
+	return true; // TODO: do
+}
+
+bool GraphStore::useGraph(const char* existingGraphId) {
+	return true; // TODO: do
+}
+
+bool GraphStore::deleteGraph(const char* existingGraphId) {
+	return true; // TODO: do
+}
+
+

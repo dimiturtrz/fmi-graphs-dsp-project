@@ -29,10 +29,20 @@ bool GraphStoreInputHandler::createGraph(const char* arguments) {
 	return false;
 }
 bool GraphStoreInputHandler::useGraph(const char* id) {
-	// graph store function - open the file of the corresponding graph (false if doesn't exist)
+	if(graphStore.useGraph(id)) {
+		return true;
+	} else {
+		strcpy(errorMessage, "graph with that id doesn't exist");
+		return false;
+	}
 }
 bool GraphStoreInputHandler::deleteGraph(const char* id) {
-	// graph store function - delete graph with this id (false if doesn't exist)
+	if(graphStore.deleteGraph(id)) {
+		return true;
+	} else {
+		strcpy(errorMessage, "graph with that id doesn't exist");
+		return false;
+	}
 }
 
 bool GraphStoreInputHandler::createNode(const char* arguments) {
