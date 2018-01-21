@@ -16,6 +16,24 @@ void GraphStore::copy(const GraphStore& other) {
 	dynamicStrcpy(storePath, other.storePath);
 }
 
+void GraphStore::openGraph(const char* id) {
+	appendComponentToPath(storePath, graph->getId());
+	graph->readFromFile(storePath);
+	graph = new Graph(storePath, id);
+	removeLastComponentFromPath(storePath);
+}
+
+void GraphStore::closeGraph() {
+	if(graph != NULL) {
+		return;
+	}
+
+	appendComponentToPath(storePath, graph->getId());
+	graph->writeToFile(storePath);
+	removeLastComponentFromPath(storePath);
+	delete graph;
+}
+
 // --------------------------- OTHER HELPERS --------------------------
 
 bool GraphStore::isUsingGraph() {
@@ -76,6 +94,8 @@ void GraphStore::createGraph(const char* newGraphId, bool directed) {
 	std::ofstream outfile(newGraphId);
 	outfile<< (directed ? 1 : 0)<< std::endl;
 	outfile.close();
+
+	useGraph(newGraphId);
 }
 
 void GraphStore::useGraph(const char* existingGraphId) {
@@ -83,7 +103,8 @@ void GraphStore::useGraph(const char* existingGraphId) {
 		return;
 	}
 
-	graph = new Graph(storePath, existingGraphId);
+	closeGraph();
+	openGraph(existingGraphId);
 }
 
 void GraphStore::deleteGraph(const char* existingGraphId) {

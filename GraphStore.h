@@ -10,6 +10,9 @@ class GraphStore {
 	void clear();
 	void copy(const GraphStore& other);
 
+	void openGraph(const char* path);
+	void closeGraph();
+
 public:
 	GraphStore(const char* path);
 	GraphStore(const GraphStore& other);

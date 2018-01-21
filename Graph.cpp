@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include "helpers/MyStrings.h"
 #include "Graph.h"
 
@@ -9,18 +11,11 @@ void Graph::copy(const Graph& other) {
 	strcpy(id, other.id);
 }
 
-void Graph::readFromFile(const char* path) {
-	
-}
-
 // --------------------------- BIG FOUR ---------------------------
 
 Graph::Graph(char* storePath, const char* graphId) {
 	strcpy(id, graphId);
-	
-	appendComponentToPath(storePath, graphId);
 	readFromFile(storePath);
-	removeLastComponentFromPath(storePath);
 }
 Graph::Graph(const Graph& other) {
 	copy(other);
@@ -33,6 +28,24 @@ Graph& Graph::operator=(const Graph& other) {
 }
 Graph::~Graph() {}
 
+// ------------------------- FILE OPERATIONS ----------------------
+
+void Graph::readFromFile(const char* path) {
+	if(path == NULL) {
+		return;
+	}
+
+	std::ifstream inputGraphFile(path);
+
+	inputGraphFile.close();
+}
+
+void Graph::writeToFile(const char* path) {
+	std::ofstream outputGraphFile(path);
+
+	outputGraphFile.close();
+}
+
 // ------------------------ OTHER METHODS -------------------------
 
 bool Graph::hasNode(const char* nodeId) {
@@ -41,4 +54,10 @@ bool Graph::hasNode(const char* nodeId) {
 
 bool Graph::hasArc(const char* nodeId1, const char* nodeId2) {
 	return true; // TODO do
+}
+
+// --------------------------- GETTERS -----------------------------
+
+const char* Graph::getId() {
+	return id;
 }
