@@ -1,3 +1,6 @@
+#include <iostream>
+#include <fstream>
+
 #include "helpers/MyStrings.h"
 #include "GraphStore.h"
 
@@ -9,32 +12,41 @@ void GraphStore::clear() {
 
 void GraphStore::copy(const GraphStore& other) {
 	dynamicStrcpy(storePath, other.storePath);
-	strcpy(usedGraphId, other.usedGraphId);
 }
 
 // --------------------------- OTHER HELPERS --------------------------
 
 bool GraphStore::isUsingGraph() {
-	return (*usedGraphId != '\0');
+	return (graph != NULL);
 }
 	
 bool GraphStore::graphExists(const char* graphId) {
-	return true; // TODO do
+	appendComponentToPath(storePath, graphId);
+	std::ifstream graphFile(storePath);
+	removeLastComponentFromPath(storePath);
+	return graphFile;
 }
 	
 bool GraphStore::nodeExists(const char* nodeId) {
-	return true; // TODO do
+	if(graph == NULL) {
+		return false;
+	}
+
+	return graph->hasNode(nodeId);
 }
 
 bool GraphStore::arcExists(const char* nodeId1, const char* nodeId2) {
-	return true; // TODO do
+	if(graph == NULL) {
+		return false;
+	}
+
+	return graph->hasArc(nodeId1, nodeId2);
 }
 
 // ------------------------------ BIG FOUR ----------------------------
 
-GraphStore::GraphStore(const char* path): storePath(NULL) {
+GraphStore::GraphStore(const char* path): storePath(NULL), graph(NULL) {
 	dynamicStrcpy(storePath, path);
-	usedGraphId[0] = '\0';
 }
 
 GraphStore::GraphStore(const GraphStore& other) {

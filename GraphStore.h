@@ -1,9 +1,11 @@
+#include "Graph.h"
+
 #ifndef GRAPH_STORE
 #define GRAPH_STORE
 
 class GraphStore {
+	Graph* graph;
 	char* storePath;
-	char usedGraphId[50];
 
 	void clear();
 	void copy(const GraphStore& other);

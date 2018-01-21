@@ -182,12 +182,16 @@ bool GraphStoreInputHandler::searchPath(const char* arguments) {
 
 	if(strcmp(algorithmName, "bfs") == 0) {
 		graphStore.bfs(nodeId1, nodeId2);
+		return true;
 	} else if(strcmp(algorithmName, "dfs-shortest") == 0) {
 		graphStore.dfsShortest(nodeId1, nodeId2);
+		return true;
 	} else if(strcmp(algorithmName, "dfs-longest") == 0) {
 		graphStore.dfsLongest(nodeId1, nodeId2);
+		return true;
 	} else if(strcmp(algorithmName, "dijkstra") == 0) {
 		graphStore.dijkstra(nodeId1, nodeId2);
+		return true;
 	} else {
 		strcpy(errorMessage, "invalid algorithm name");
 		return false;
