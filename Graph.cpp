@@ -1,3 +1,4 @@
+#include <iostream>
 #include <fstream>
 
 #include "helpers/MyStrings.h"
@@ -13,9 +14,8 @@ void Graph::copy(const Graph& other) {
 
 // --------------------------- BIG FOUR ---------------------------
 
-Graph::Graph(char* storePath, const char* graphId) {
+Graph::Graph(const char* graphId) {
 	strcpy(id, graphId);
-	readFromFile(storePath);
 }
 Graph::Graph(const Graph& other) {
 	copy(other);
@@ -35,13 +35,19 @@ void Graph::readFromFile(const char* path) {
 		return;
 	}
 
+	char buff[1024];
 	std::ifstream inputGraphFile(path);
+
+	inputGraphFile>> directed;
+	inputGraphFile.getline(buff, 1023);
 
 	inputGraphFile.close();
 }
 
 void Graph::writeToFile(const char* path) {
 	std::ofstream outputGraphFile(path);
+
+	outputGraphFile<< directed<< std::endl;
 
 	outputGraphFile.close();
 }

@@ -10,7 +10,7 @@ class Graph {
 	void clear();
 	void copy(const Graph& other);
 public:
-	Graph(char* storePath = NULL, const char* graphId = "");
+	Graph(const char* graphId = "");
 	Graph(const Graph& other);
 	Graph& operator=(const Graph& other);
 	~Graph();

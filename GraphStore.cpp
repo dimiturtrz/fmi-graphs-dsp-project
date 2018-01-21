@@ -16,22 +16,32 @@ void GraphStore::copy(const GraphStore& other) {
 	dynamicStrcpy(storePath, other.storePath);
 }
 
+void GraphStore::makeGraph(const char* id, bool directed) {
+    appendComponentToPath(storePath, id);
+	std::ofstream outfile(storePath);
+	outfile<< (directed ? 1 : 0)<< std::endl;
+	outfile.close();
+	removeLastComponentFromPath(storePath);
+}
+
 void GraphStore::openGraph(const char* id) {
-	appendComponentToPath(storePath, graph->getId());
+	appendComponentToPath(storePath, id);
+	graph = new Graph(id);
 	graph->readFromFile(storePath);
-	graph = new Graph(storePath, id);
 	removeLastComponentFromPath(storePath);
 }
 
 void GraphStore::closeGraph() {
-	if(graph != NULL) {
+	if(graph == NULL) {
 		return;
 	}
 
 	appendComponentToPath(storePath, graph->getId());
 	graph->writeToFile(storePath);
 	removeLastComponentFromPath(storePath);
+
 	delete graph;
+	graph = NULL;
 }
 
 // --------------------------- OTHER HELPERS --------------------------
@@ -39,7 +49,7 @@ void GraphStore::closeGraph() {
 bool GraphStore::isUsingGraph() {
 	return (graph != NULL);
 }
-	
+
 bool GraphStore::graphExists(const char* graphId) {
 	appendComponentToPath(storePath, graphId);
 	std::ifstream graphFile(storePath);
@@ -48,7 +58,7 @@ bool GraphStore::graphExists(const char* graphId) {
 	removeLastComponentFromPath(storePath);
 	return fileOpened;
 }
-	
+
 bool GraphStore::nodeExists(const char* nodeId) {
 	if(graph == NULL) {
 		return false;
@@ -87,30 +97,19 @@ GraphStore::~GraphStore() {
 // --------------------------- GRAPH METHODS ----------------------------
 
 void GraphStore::createGraph(const char* newGraphId, bool directed) {
-	if(graphExists(newGraphId)) {
-		return;
-	}
-
-	std::ofstream outfile(newGraphId);
-	outfile<< (directed ? 1 : 0)<< std::endl;
-	outfile.close();
-
+    makeGraph(newGraphId, directed);
 	useGraph(newGraphId);
 }
 
 void GraphStore::useGraph(const char* existingGraphId) {
-	if(!graphExists(existingGraphId)) {
-		return;
-	}
-
 	closeGraph();
 	openGraph(existingGraphId);
 }
 
 void GraphStore::deleteGraph(const char* existingGraphId) {
-	if(!graphExists(existingGraphId)) {
-		return;
-	}
+    if(strcmp(existingGraphId, graph->getId()) == 0) {
+        closeGraph();
+    }
 
 	appendComponentToPath(storePath, existingGraphId);
 	remove(storePath);
@@ -124,11 +123,11 @@ void GraphStore::createNode(const char* newNodeId) {
 }
 void GraphStore::deleteNode(const char* existingNodeId) {
 	return ; // TODO: do
-} 
+}
 
 // ---------------------------- ARC METHODS ------------------------------
 
-void GraphStore::createArc(const char* nodeId1, const char* nodeId2, int weight) { 
+void GraphStore::createArc(const char* nodeId1, const char* nodeId2, int weight) {
 	return ; // TODO: do
 }
 void GraphStore::deleteArc(const char* nodeId1, const char* nodeId2) {
