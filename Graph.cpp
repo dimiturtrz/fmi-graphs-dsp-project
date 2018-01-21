@@ -72,7 +72,14 @@ bool Graph::hasNode(const char* nodeId) {
 }
 
 bool Graph::hasArc(const char* nodeId1, const char* nodeId2) {
-	return true; // TODO do
+	Node* node1 = nodes.getElement(nodeId1);
+	Node* node2 = nodes.getElement(nodeId2);
+
+	if(node1 == NULL || node2 == NULL) {
+		return false;
+	}
+	
+	return node1->hasNeighbour(node2);
 }
 
 // --------------------------- GETTERS -----------------------------
@@ -85,5 +92,9 @@ const char* Graph::getId() {
 
 void Graph::addNode(const char* nodeId) {
 	nodes.add(nodeId, Node());
+}
+
+void Graph::removeNode(const char* nodeId) {
+	nodes.remove(nodeId);
 }
 

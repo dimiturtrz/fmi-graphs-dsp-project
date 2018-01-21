@@ -4,9 +4,10 @@
 #define NODE
 
 class Node {
-	BinarySearchTree<Node*> neightbours;
+	BinarySearchTree<Node*> neighbours;
 public:
-	Node();
+
+	bool hasNeighbour(Node* neighbour);
 };
 
 #endif

@@ -122,7 +122,7 @@ void GraphStore::createNode(const char* newNodeId) {
 	return graph->addNode(newNodeId);
 }
 void GraphStore::deleteNode(const char* existingNodeId) {
-	return ; // TODO: do
+	return graph->removeNode(existingNodeId);
 }
 
 // ---------------------------- ARC METHODS ------------------------------

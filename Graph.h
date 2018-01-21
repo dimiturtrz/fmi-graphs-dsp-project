@@ -27,6 +27,7 @@ public:
 	const char* getId();
 
 	void addNode(const char* nodeId);
+	void removeNode(const char* nodeId);
 };
 
 #endif

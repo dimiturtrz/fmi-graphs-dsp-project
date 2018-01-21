@@ -1,3 +1,5 @@
 #include "Node.h"
 
-Node::Node() {}
+bool Node::hasNeighbour(Node* neighbour) {
+	return (neighbours.getElement(neighbour) != NULL);
+}
