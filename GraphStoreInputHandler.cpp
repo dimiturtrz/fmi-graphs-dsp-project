@@ -12,42 +12,42 @@ bool GraphStoreInputHandler::createGraph(const char* arguments) {
 	char* graphId = new char[strlen(arguments, ' ') + 1];
 	strcpy(graphId, arguments, ' ');
 	const char* remainingSubstring = getNextWordStart(arguments);
+
+	if(graphStore.graphExists(graphId)) {
+		strcpy(errorMessage, "graph with that id exists");
+		return false;
+	}
+
 	if(*remainingSubstring == '\0') {
-		if(graphStore.createGraph(graphId, false)) {
-			return true;
-		} else {
-			strcpy(errorMessage, "graph with that id exists");
-			return false;
-		}
+		graphStore.createGraph(graphId, false);
+		return true;
 	}
 	if(strcmp(remainingSubstring, "directed", ' ') == 0 && getNextWordStart(remainingSubstring) == '\0') {
-		if(graphStore.createGraph(graphId, true)) {
-			return true;
-		} else {
-			strcpy(errorMessage, "graph with that id exists");
-			return false;
-		}
+		graphStore.createGraph(graphId, true);
+		return true;
 	}
 	strcpy(errorMessage, "incorrect arguments format");
 	return false;
 }
 
 bool GraphStoreInputHandler::useGraph(const char* id) {
-	if(graphStore.useGraph(id)) {
-		return true;
-	} else {
+	if(!graphStore.graphExists(id)) {
 		strcpy(errorMessage, "graph with that id doesn't exist");
 		return false;
 	}
+	
+	graphStore.useGraph(id);
+	return true;
 }
 
 bool GraphStoreInputHandler::deleteGraph(const char* id) {
-	if(graphStore.deleteGraph(id)) {
-		return true;
-	} else {
+	if(!graphStore.graphExists(id)) {
 		strcpy(errorMessage, "graph with that id doesn't exist");
 		return false;
 	}
+	
+	graphStore.deleteGraph(id);
+	return true;
 }
 
 // ------------------- NODE METHODS
@@ -58,25 +58,27 @@ bool GraphStoreInputHandler::createNode(const char* id) {
 		return false;
 	}
 
-	if(graphStore.createNode(id)) {
-		return true;
-	} else {
+	if(graphStore.nodeExists(id)) {
 		strcpy(errorMessage, "node with that id exists");
 		return false;
 	}
+
+	graphStore.createNode(id);
+	return true;
 }
 bool GraphStoreInputHandler::deleteNode(const char* id) {
 	if(!graphStore.isUsingGraph()) {
 		strcpy(errorMessage, "no used graph");
 		return false;
 	}
-	
-	if(graphStore.deleteNode(id)) {
-		return true;
-	} else {
-		strcpy(errorMessage, "node with that id  doesn't exist");
+
+	if(!graphStore.nodeExists(id)) {
+		strcpy(errorMessage, "node with that id doesn't exists");
 		return false;
 	}
+
+	graphStore.deleteNode(id);
+	return true;
 }
 
 // ------------------- ARC METHODS
@@ -107,12 +109,13 @@ bool GraphStoreInputHandler::createArc(const char* arguments) {
 		return false;
 	}
 	
-	if(graphStore.createArc(nodeId1, nodeId2, arcWeight)) {
-		return true;
-	} else {
+	if(!graphStore.nodeExists(nodeId1) || !graphStore.nodeExists(nodeId2)) {
 		strcpy(errorMessage, "one or both nodes with that id don't exist");
 		return false;
 	}
+	
+	graphStore.createArc(nodeId1, nodeId2, arcWeight);
+	return true;
 }
 bool GraphStoreInputHandler::deleteArc(const char* arguments) {
 	if(!graphStore.isUsingGraph()) {
@@ -134,13 +137,19 @@ bool GraphStoreInputHandler::deleteArc(const char* arguments) {
 		strcpy(errorMessage, "incorrect arguments format");
 		return false;
 	}
-	
-	if(graphStore.deleteArc(nodeId1, nodeId2)) {
-		return true;
-	} else {
-		strcpy(errorMessage, "one or both nodes with that id (or arc) don't exist");
+
+	if(!graphStore.nodeExists(nodeId1) || !graphStore.nodeExists(nodeId2)) {
+		strcpy(errorMessage, "one or both nodes with that id don't exist");
 		return false;
 	}
+
+	if(!graphStore.arcExists(nodeId1, nodeId2)) {
+		strcpy(errorMessage, "arc don't exist");
+		return false;
+	}
+	
+	graphStore.deleteArc(nodeId1, nodeId2);
+	return true;
 }
 
 // ---------------------------- SEARCH METHODS
@@ -165,15 +174,23 @@ bool GraphStoreInputHandler::searchPath(const char* arguments) {
 		strcpy(errorMessage, "incorrect arguments format");
 		return false;
 	}
+	
+	if(!graphStore.nodeExists(nodeId1) || !graphStore.nodeExists(nodeId2)) {
+		strcpy(errorMessage, "one or both nodes with that id don't exist");
+		return false;
+	}
 
 	if(strcmp(algorithmName, "bfs") == 0) {
-		
+		graphStore.bfs(nodeId1, nodeId2);
 	} else if(strcmp(algorithmName, "dfs-shortest") == 0) {
-
+		graphStore.dfsShortest(nodeId1, nodeId2);
 	} else if(strcmp(algorithmName, "dfs-longest") == 0) {
-
+		graphStore.dfsLongest(nodeId1, nodeId2);
 	} else if(strcmp(algorithmName, "dijkstra") == 0) {
-
+		graphStore.dijkstra(nodeId1, nodeId2);
+	} else {
+		strcpy(errorMessage, "invalid algorithm name");
+		return false;
 	}
 }
 
