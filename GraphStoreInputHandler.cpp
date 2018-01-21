@@ -9,15 +9,23 @@ bool GraphStoreInputHandler::createGraph(const char* arguments) {
 	char* graphId = new char[strlen(arguments, ' ') + 1];
 	strcpy(graphId, arguments, ' ');
 	const char* remainingSubstring = getNextWordStart(arguments);
-	// call graph store function (new file if not existing (all graphs could be separate files)
 	if(*remainingSubstring == '\0') {
-		std::cout<< "undirected make\n";
-		// return make undirected graph
+		if(graphStore.createGraph(graphId, false)) {
+			return true;
+		} else {
+			strcpy(errorMessage, "graph with that id exists");
+			return false;
+		}
 	}
 	if(strcmp(remainingSubstring, "directed", ' ') == 0 && getNextWordStart(remainingSubstring) == '\0') {
-		std::cout<< "directed make\n";
-		// return make directed graph
+		if(graphStore.createGraph(graphId, true)) {
+			return true;
+		} else {
+			strcpy(errorMessage, "graph with that id exists");
+			return false;
+		}
 	}
+	strcpy(errorMessage, "incorrect arguments format");
 	return false;
 }
 bool GraphStoreInputHandler::useGraph(const char* id) {
@@ -114,7 +122,7 @@ void GraphStoreInputHandler::startGettingInput() {
 		std::cin.getline(arguments, 511);
 		for(; arguments[argumentOffset] == ' '; ++argumentOffset);
 		if(!interpretInput(commandVerb, commandSubject, arguments + argumentOffset)) {
-			std::cout<< errorMessage;
+			std::cout<< "Error: "<< errorMessage<< std::endl;
 		}
 	}
 }
@@ -129,7 +137,7 @@ void GraphStoreInputHandler::generateStandartErrorMessage(const char* commandVer
 	for(int l = 0; commandSubject[l] != '\0'; ++l) {
 		errorMessage[++i] = commandSubject[l];
 	}
-	strcpy(errorMessage + i, "\" is an invalid command\n");
+	strcpy(errorMessage + i, "\" is an invalid command");
 }
 
 // ------------- CONSTRUCTOR AND DESTRUCTOR -----------------
