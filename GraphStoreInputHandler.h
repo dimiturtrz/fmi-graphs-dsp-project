@@ -1,8 +1,11 @@
+#include "GraphStore.h"
+
 #ifndef GRAPH_STORE_INPUT_HANDLER
 #define GRAPH_STORE_INPUT_HANDLER
 
 class GraphStoreInputHandler {
 private:
+	GraphStore graphStore;
 	bool gettingInput;
 	char errorMessage[1024];
 

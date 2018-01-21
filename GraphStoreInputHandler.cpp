@@ -133,7 +133,5 @@ void GraphStoreInputHandler::generateStandartErrorMessage(const char* commandVer
 }
 
 // ------------- CONSTRUCTOR AND DESTRUCTOR -----------------
-GraphStoreInputHandler::GraphStoreInputHandler(const char* pathToGraphStoreFolder) {
-	// graph store initialization
-}
+GraphStoreInputHandler::GraphStoreInputHandler(const char* pathToGraphStoreFolder): graphStore(pathToGraphStoreFolder) {}
 

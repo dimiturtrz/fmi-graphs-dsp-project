@@ -48,3 +48,13 @@ int getWeightFromWord(const char* wordStart) {
 
 	return accum;
 }
+
+void dynamicStrcpy(char*& destination, const char* source) {
+	if (source == NULL) {
+		return;
+	}
+
+	delete [] destination;
+	destination = new char[strlen(source) + 1];
+	strcpy(destination, source);
+}
