@@ -88,12 +88,14 @@ GraphStore::GraphStore(const char* path): storePath(NULL), graph(NULL) {
 GraphStore::GraphStore(const GraphStore& other) {
 	copy(other);
 }
+
 GraphStore& GraphStore::operator=(const GraphStore& other) {
 	if(this != &other) {
 		copy(other);
 	}
 	return *this;
 }
+
 GraphStore::~GraphStore() {
 	clear();
 }

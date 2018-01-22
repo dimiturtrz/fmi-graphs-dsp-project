@@ -9,9 +9,17 @@ class Node {
 		Node* end;
 	public:
 		Arc(Node* end, int weight);
+		bool operator>(const Arc& other);
+		bool operator<(const Arc& other);
+		bool operator==(const Arc& other);
 	};
 
-	BinarySearchTree<Arc> neighbours;
+	class NeighboursBST: BinarySearchTree<Node::Arc> {
+	public:
+		Arc* getNeighbour(Node* neightbour);
+	};
+
+	NeighboursBST neighbours;
 public:
 	bool hasNeighbour(Node* neighbour);
 };

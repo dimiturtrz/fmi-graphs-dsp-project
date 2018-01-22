@@ -3,7 +3,7 @@
 // -------------------------------- NODE ------------------------------------
 
 template<typename T>
-BinarySearchTree<T>::Node::Node(T data, Node* left, Node* right): data(data) {}
+BinarySearchTree<T>::BSTNode::BSTNode(T data, BSTNode* left, BSTNode* right): data(data) {}
 
 // -------------------------------- TREE ------------------------------------
 
@@ -15,7 +15,7 @@ void BinarySearchTree<T>::clear() {
 }
 
 template<typename T>
-void BinarySearchTree<T>::clearSubtree(Node*& currRoot) {
+void BinarySearchTree<T>::clearSubtree(BSTNode*& currRoot) {
 	if(currRoot == NULL) {
 		return;
 	}
@@ -41,12 +41,12 @@ void BinarySearchTree<T>::copy(const BinarySearchTree& other) {
 }
 
 template<typename T>
-void BinarySearchTree<T>::copySubtree(Node*& currRoot, Node* otherCurrRoot) {
+void BinarySearchTree<T>::copySubtree(BSTNode*& currRoot, BSTNode* otherCurrRoot) {
 	if(otherCurrRoot == NULL) {
 		return;
 	}
 
-	currRoot = new Node(otherCurrRoot->data);
+	currRoot = new BSTNode(otherCurrRoot->data);
 
 	if(otherCurrRoot->left != NULL) {
 		copySubtree(currRoot->left, otherCurrRoot->left);
@@ -88,9 +88,9 @@ void BinarySearchTree<T>::add(const T& data) {
 }
 
 template<typename T>
-void BinarySearchTree<T>::add(const T& data, Node*& currRoot) {
+void BinarySearchTree<T>::add(const T& data, BSTNode*& currRoot) {
 	if(currRoot == NULL) {
-		currRoot = new Node(data);
+		currRoot = new BSTNode(data);
 		return;
 	}
 
@@ -109,20 +109,20 @@ void BinarySearchTree<T>::remove(const T& data) {
         return remove(data, root);
     }
 
-    removeNode(root);
+    removeBSTNode(root);
 }
 
 template<typename T>
-void BinarySearchTree<T>::remove(const T& data, Node*& currRoot) {
+void BinarySearchTree<T>::remove(const T& data, BSTNode*& currRoot) {
 	if(currRoot == NULL) {
 		throw;
 	}
 
 	if(currRoot->left != NULL && currRoot->left->data == data) {
-		currRoot->left = removeNode(currRoot->left);
+		currRoot->left = removeBSTNode(currRoot->left);
         return;
 	} else if(currRoot->right != NULL && currRoot->right->data == data) {
-		currRoot->right = removeNode(currRoot->right);
+		currRoot->right = removeBSTNode(currRoot->right);
 		return;
 	}
 
@@ -134,14 +134,14 @@ void BinarySearchTree<T>::remove(const T& data, Node*& currRoot) {
 }
 
 template<typename T>
-typename BinarySearchTree<T>::Node * BinarySearchTree<T>::removeNode(BinarySearchTree<T>::Node* node) {
+typename BinarySearchTree<T>::BSTNode * BinarySearchTree<T>::removeBSTNode(BinarySearchTree<T>::BSTNode* node) {
 	if(node->left != NULL && node->right != NULL) {
 		node->data = getAndRemoveMin(node->right, node);
 		return node;
 	}
 
 	if(node->left != NULL || node->right != NULL) {
-		BinarySearchTree<T>::Node* newRoot = (node->left != NULL) ? node->left : node->right;
+		BinarySearchTree<T>::BSTNode* newRoot = (node->left != NULL) ? node->left : node->right;
 		delete node;
 		return newRoot;
 	}
@@ -151,21 +151,21 @@ typename BinarySearchTree<T>::Node * BinarySearchTree<T>::removeNode(BinarySearc
 }
 
 template<typename T>
-T BinarySearchTree<T>::getAndRemoveMin(Node* node, Node*& parent) {
+T BinarySearchTree<T>::getAndRemoveMin(BSTNode* node, BSTNode*& parent) {
 	if(node->left != NULL) {
 		if(node->left->left == NULL) {
-			T oldNodeValue = node->left->data;
+			T oldBSTNodeValue = node->left->data;
 			node->left = node->left->right;
 			delete node->left;
-			return oldNodeValue;
+			return oldBSTNodeValue;
 		} else {
 			return getAndRemoveMin(node->left, node);
 		}
 	} else {
-		T oldNodeValue = node->data;
+		T oldBSTNodeValue = node->data;
 		parent->right = node->right;
 		delete node;
-		return oldNodeValue;
+		return oldBSTNodeValue;
 	}
 }
 
@@ -179,7 +179,7 @@ void BinarySearchTree<T>::print() {
 }
 
 template<typename T>
-void BinarySearchTree<T>::printSubtree(Node* currRoot) {
+void BinarySearchTree<T>::printSubtree(BSTNode* currRoot) {
 	if(currRoot->left != NULL) {
 		printSubtree(currRoot->left);
 	}
@@ -197,7 +197,7 @@ T* BinarySearchTree<T>::getElement(const T& data) {
 }
 
 template<typename T>
-T* BinarySearchTree<T>::getElement(const T& data, Node* currRoot) {
+T* BinarySearchTree<T>::getElement(const T& data, BSTNode* currRoot) {
 	if(currRoot == NULL) {
 		return NULL;
 	}

@@ -5,29 +5,29 @@
 
 template <class T>
 class BinarySearchTree {
-	struct Node {
-		Node* left;
-		Node* right;
+	struct BSTNode {
+		BSTNode* left;
+		BSTNode* right;
 		T data;
 
 		public:
-			Node(T data, Node* left = NULL, Node* right = NULL);
+			BSTNode(T data, BSTNode* left = NULL, BSTNode* right = NULL);
 	} * root;
 
 	void copy(const BinarySearchTree& other);
-	void copySubtree(Node*& currRoot, Node* otherCurrRoot);
+	void copySubtree(BSTNode*& currRoot, BSTNode* otherCurrRoot);
 
 	void clear();
-	void clearSubtree(Node*& currRoot);
+	void clearSubtree(BSTNode*& currRoot);
 
-	void add(const T& data, Node*& currRoot);
-	void remove(const T& data, Node*& currRoot);
+	void add(const T& data, BSTNode*& currRoot);
+	void remove(const T& data, BSTNode*& currRoot);
 
-	T* getElement(const T& data, Node* currRoot);
-	void printSubtree(Node* currRoot);
+	T* getElement(const T& data, BSTNode* currRoot);
+	void printSubtree(BSTNode* currRoot);
 
-	Node* removeNode(Node* node);
-	T getAndRemoveMin(Node* node, Node*& parent);
+	BSTNode* removeBSTNode(BSTNode* node);
+	T getAndRemoveMin(BSTNode* node, BSTNode*& parent);
 public:
 	BinarySearchTree();
 	BinarySearchTree(const BinarySearchTree& other);
