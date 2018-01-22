@@ -4,9 +4,15 @@
 #define NODE
 
 class Node {
-	BinarySearchTree<Node*> neighbours;
-public:
+	struct Arc {
+		int weight;
+		Node* end;
+	public:
+		Arc(Node* end, int weight);
+	};
 
+	BinarySearchTree<Arc> neighbours;
+public:
 	bool hasNeighbour(Node* neighbour);
 };
 

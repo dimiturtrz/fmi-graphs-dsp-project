@@ -235,6 +235,11 @@ bool GraphStoreInputHandler::interpretInput(const char* commandVerb, const char*
 }
 
 void GraphStoreInputHandler::startGettingInput() {
+	if(!(graphStore.isValid())) {
+		std::cout<< "directory doesn't exist\n";
+		return;
+	}
+
 	gettingInput = true;
 	char commandVerb[8]; // if we get say DELETES the extra char will catch the 'S'
 	char commandSubject[7];

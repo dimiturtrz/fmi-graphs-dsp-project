@@ -7,6 +7,8 @@ class GraphStore {
 	Graph* graph;
 	char* storePath;
 
+	bool valid;
+
 	void clear();
 	void copy(const GraphStore& other);
 
@@ -19,6 +21,9 @@ public:
 	GraphStore(const GraphStore& other);
 	GraphStore& operator=(const GraphStore& other);
 	~GraphStore();
+
+	void setValidity();
+	bool isValid();
 
 	bool isUsingGraph();
 	bool graphExists(const char* graphId);

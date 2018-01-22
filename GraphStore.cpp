@@ -3,6 +3,9 @@
 
 #include <stdio.h> // only for file removal
 
+#include <sys/types.h>
+#include <sys/stat.h> // for validity checking of folder
+
 #include "helpers/MyStrings.h"
 #include "GraphStore.h"
 
@@ -79,6 +82,7 @@ bool GraphStore::arcExists(const char* nodeId1, const char* nodeId2) {
 
 GraphStore::GraphStore(const char* path): storePath(NULL), graph(NULL) {
 	dynamicStrcpy(storePath, path);
+	setValidity();
 }
 
 GraphStore::GraphStore(const GraphStore& other) {
@@ -92,6 +96,17 @@ GraphStore& GraphStore::operator=(const GraphStore& other) {
 }
 GraphStore::~GraphStore() {
 	clear();
+}
+
+// --------------------------- VALIDITY
+
+void GraphStore::setValidity() {
+	struct stat info;
+	valid = (stat(storePath, &info) == 0 && (info.st_mode & S_IFDIR));
+}
+
+bool GraphStore::isValid() {
+	return valid;
 }
 
 // --------------------------- GRAPH METHODS ----------------------------
