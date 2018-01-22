@@ -28,6 +28,9 @@ public:
 
 	void addNode(const char* nodeId);
 	void removeNode(const char* nodeId);
+
+	void addArc(const char* nodeId1, const char* nodeId2, int weight);
+	void removeArc(const char* nodeId1, const char* nodeId2);
 };
 
 #endif

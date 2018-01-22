@@ -68,7 +68,7 @@ void Graph::writeToFile(const char* path) {
 // ------------------------ OTHER METHODS -------------------------
 
 bool Graph::hasNode(const char* nodeId) {
-	return (nodes.getElement(nodeId) != NULL);
+	return nodes.getElement(nodeId) != NULL;
 }
 
 bool Graph::hasArc(const char* nodeId1, const char* nodeId2) {
@@ -96,5 +96,25 @@ void Graph::addNode(const char* nodeId) {
 
 void Graph::removeNode(const char* nodeId) {
 	nodes.remove(nodeId);
+}
+
+// -------------------------- ARC METHODS --------------------------
+
+void Graph::addArc(const char* nodeId1, const char* nodeId2, int weight) {
+	Node* node1 = nodes.getElement(nodeId1);
+	Node* node2 = nodes.getElement(nodeId2);
+
+	if(node1 != NULL && node2 != NULL) {
+		node1->addNeighbour(node2, weight);
+	}
+}
+
+void Graph::removeArc(const char* nodeId1, const char* nodeId2) {
+	Node* node1 = nodes.getElement(nodeId1);
+	Node* node2 = nodes.getElement(nodeId2);
+
+	if(node1 != NULL && node2 != NULL) {
+		node1->removeNeighbour(node2);
+	}
 }
 
