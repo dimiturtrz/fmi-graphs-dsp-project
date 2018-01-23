@@ -3,7 +3,7 @@
 // -------------------------------- NODE ------------------------------------
 
 template<typename T>
-void TrenarySearchTree<T>::Node::clear() {
+void TrenarySearchTree<T>::TSTNode::clear() {
 	delete data;
 	data = NULL;
 
@@ -11,27 +11,108 @@ void TrenarySearchTree<T>::Node::clear() {
 }
 
 template<typename T>
-void TrenarySearchTree<T>::Node::copy(const TrenarySearchTree<T>::Node& other) {
+void TrenarySearchTree<T>::TSTNode::copy(const TrenarySearchTree<T>::TSTNode& other) {
 	clear();
 	data = (other.data != NULL) ? new T(*(other.data)) : NULL;
 }
 
+// ------------------------------ ITERATOR ----------------------------------
+
+template<typename T>
+TrenarySearchTree<T>::Iterator::Iterator(TSTNode* root) {
+    iterationStack.push(Pair<TSTNode*, bool>(root, false));
+	reachTreeBottom();
+}
+
+template<typename T>
+void TrenarySearchTree<T>::Iterator::reachTreeBottom() {
+    TSTNode* root = iterationStack.getTop().first;
+	while(root->lo != NULL || root->equal != NULL) {
+        iterationStack.pop();
+		if(root->hi != NULL) {
+			iterationStack.push(Pair<TSTNode*, bool>(root->hi, false));
+		}
+
+        iterationStack.push(Pair<TSTNode*, bool>(root, true));
+		if(root->equal != NULL) {
+            iterationStack.push(Pair<TSTNode*, bool>(root->equal, false));
+		}
+
+		if(root->lo != NULL) {
+			root = root->lo;
+            word.pop();
+            word.push(root->character);
+            iterationStack.push(Pair<TSTNode*, bool>(root, false));
+		} else {
+			root = root->equal;
+			word.push(root->character);
+		}
+	}
+}
+
+template<typename T>
+T& TrenarySearchTree<T>::Iterator::operator*() {
+	TSTNode* topTSTNode = iterationStack.getTop().first;
+	return *(topTSTNode->data);
+}
+
+template<typename T>
+typename TrenarySearchTree<T>::Iterator& TrenarySearchTree<T>::Iterator::operator++() {
+	TSTNode *terminal, *top;
+	while(!isFinished()) {
+		terminal = iterationStack.getTop().first;
+		iterationStack.pop();
+        top = iterationStack.getTop().first;
+		while(!isFinished() && terminal == top->equal) {
+			if(top->data != NULL) {
+				return *this;
+			}
+			word.pop();
+            terminal = top;
+			iterationStack.pop();
+            if(!isFinished()) { // for empty stack
+                top = iterationStack.getTop().first;
+            }
+		}
+		if(isFinished()) {
+            break;
+		}
+
+		word.pop();
+        if(!iterationStack.getTop().second) {
+            reachTreeBottom();
+            return *this;
+        }
+	}
+}
+
+template<typename T>
+typename TrenarySearchTree<T>::Iterator& TrenarySearchTree<T>::Iterator::operator++(int) {
+	Iterator currValue(*this);
+	*this = ++(*this);
+	return currValue;
+}
+
+template<typename T>
+bool TrenarySearchTree<T>::Iterator::isFinished() {
+	return iterationStack.isEmpty();
+}
 // ----------------------------- BIG FOUR
 
 template<typename T>
-TrenarySearchTree<T>::Node::Node(char character, T* data): character(character), data(NULL), hi(NULL), lo(NULL), equal(NULL) {
+TrenarySearchTree<T>::TSTNode::TSTNode(char character, T* data): character(character), data(NULL), hi(NULL), lo(NULL), equal(NULL) {
 	if(data != NULL) {
 		this->data = new T(*data);
 	}
 }
 
 template<typename T>
-TrenarySearchTree<T>::Node::Node(const TrenarySearchTree<T>::Node& other): hi(NULL), lo(NULL), equal(NULL) {
+TrenarySearchTree<T>::TSTNode::TSTNode(const TrenarySearchTree<T>::TSTNode& other): hi(NULL), lo(NULL), equal(NULL) {
 	copy(other);
 }
 
 template<typename T>
-typename TrenarySearchTree<T>::Node& TrenarySearchTree<T>::Node::operator=(const TrenarySearchTree<T>::Node& other) {
+typename TrenarySearchTree<T>::TSTNode& TrenarySearchTree<T>::TSTNode::operator=(const TrenarySearchTree<T>::TSTNode& other) {
 	if(this != &other) {
 		copy(other);
 	}
@@ -39,7 +120,7 @@ typename TrenarySearchTree<T>::Node& TrenarySearchTree<T>::Node::operator=(const
 }
 
 template<typename T>
-TrenarySearchTree<T>::Node::~Node() {
+TrenarySearchTree<T>::TSTNode::~TSTNode() {
 	delete data;
 }
 
@@ -55,7 +136,7 @@ void TrenarySearchTree<T>::clear() {
 }
 
 template<typename T>
-void TrenarySearchTree<T>::clearSubtree(Node*& currRoot) {
+void TrenarySearchTree<T>::clearSubtree(TSTNode*& currRoot) {
 
 	if(currRoot->lo != NULL) {
 		clearSubtree(currRoot->lo);
@@ -84,9 +165,9 @@ void TrenarySearchTree<T>::copy(const TrenarySearchTree& other) {
 }
 
 template<typename T>
-void TrenarySearchTree<T>::copySubtree(Node*& currRoot, Node* otherCurrRoot) {
+void TrenarySearchTree<T>::copySubtree(TSTNode*& currRoot, TSTNode* otherCurrRoot) {
 
-	currRoot = new Node(*otherCurrRoot);
+	currRoot = new TSTNode(*otherCurrRoot);
 
 	if(otherCurrRoot->hi != NULL) {
 		copySubtree(currRoot->hi, otherCurrRoot->hi);
@@ -124,6 +205,13 @@ TrenarySearchTree<T>::~TrenarySearchTree() {
 	clear();
 }
 
+// -------------------------- INTERATOR
+
+template<typename T>
+typename TrenarySearchTree<T>::Iterator TrenarySearchTree<T>::begin() {
+	return Iterator(root);
+}
+
 // ---------------------------- ADD
 
 template<typename T>
@@ -131,7 +219,7 @@ void TrenarySearchTree<T>::add(const char* key, const T& data) {
 	if(root != NULL) {
         add(key, data, root);
 	} else {
-		root = new Node(*key);
+		root = new TSTNode(*key);
 		if(*key == '\0') {
             root->data = new T(data);
             return;
@@ -141,7 +229,7 @@ void TrenarySearchTree<T>::add(const char* key, const T& data) {
 }
 
 template<typename T>
-void TrenarySearchTree<T>::add(const char* key, const T& data, Node*& currRoot) {
+void TrenarySearchTree<T>::add(const char* key, const T& data, TSTNode*& currRoot) {
 	if(*key == '\0') {
 		delete currRoot->data;
 		currRoot->data = new T(data);
@@ -153,7 +241,7 @@ void TrenarySearchTree<T>::add(const char* key, const T& data, Node*& currRoot) 
         if(currRoot->data != NULL) {
             key += 1;
         }
-		currRoot->equal = new Node(*key);
+		currRoot->equal = new TSTNode(*key);
         return add(key + 1, data, currRoot->equal);
 	}
 
@@ -165,14 +253,14 @@ void TrenarySearchTree<T>::add(const char* key, const T& data, Node*& currRoot) 
         }
     } else if(*key > currRoot->character) {
 		if(currRoot->hi == NULL) {
-			currRoot->hi = new Node(*key);
+			currRoot->hi = new TSTNode(*key);
             return add(key + 1, data, currRoot->hi);
 		} else {
             return add(key, data, currRoot->hi);
 		}
 	} else if (*key < currRoot->character) {
 		if(currRoot->lo == NULL) {
-			currRoot->lo = new Node(*key);
+			currRoot->lo = new TSTNode(*key);
             return add(key + 1, data, currRoot->lo);
 		} else {
             return add(key, data, currRoot->lo);
@@ -188,7 +276,7 @@ void TrenarySearchTree<T>::remove(const char* key) {
 }
 
 template<typename T>
-void TrenarySearchTree<T>::remove(const char* key, Node*& currRoot) {
+void TrenarySearchTree<T>::remove(const char* key, TSTNode*& currRoot) {
     if(currRoot == NULL) {
         return;
     }
@@ -240,7 +328,7 @@ void TrenarySearchTree<T>::print() {
 }
 
 template<typename T>
-void TrenarySearchTree<T>::printSubtree(Node* currRoot, char* accumWord, int accumWordIndex) {
+void TrenarySearchTree<T>::printSubtree(TSTNode* currRoot, char* accumWord, int accumWordIndex) {
     if(currRoot == NULL) {
         return;
     }
@@ -265,7 +353,7 @@ T* TrenarySearchTree<T>::getElement(const char* key) {
 }
 
 template<typename T>
-T* TrenarySearchTree<T>::getElement(const char* key, Node* currRoot) {
+T* TrenarySearchTree<T>::getElement(const char* key, TSTNode* currRoot) {
 	if(currRoot == NULL) {
 		return NULL;
 	}

@@ -1,44 +1,59 @@
-#include <iostream>
+#include "Stack.hpp"
+#include "Pair.hpp"
 
 #ifndef TRENARY_SEARCH_TREE_H
 #define TRENARY_SEARCH_TREE_H
 
 template <class T>
 class TrenarySearchTree {
-	struct Node {
-		Node* hi;
-		Node* lo;
-		Node* equal;
+	struct TSTNode {
+		TSTNode* hi;
+		TSTNode* lo;
+		TSTNode* equal;
 
 		char character;
 		T* data;
 
 		void clear();
-		void copy(const Node& other);
+		void copy(const TSTNode& other);
 
 	public:
-		Node(char character, T* data = NULL);
-		Node(const Node& other);
-		Node& operator=(const Node& other);
-		~Node();
+		TSTNode(char character, T* data = NULL);
+		TSTNode(const TSTNode& other);
+		TSTNode& operator=(const TSTNode& other);
+		~TSTNode();
 	} * root;
 
 	void clear();
-	void clearSubtree(Node*& currRoot);
+	void clearSubtree(TSTNode*& currRoot);
 
 	void copy(const TrenarySearchTree& other);
-	void copySubtree(Node*& currRoot, Node* otherCurrRoot);
+	void copySubtree(TSTNode*& currRoot, TSTNode* otherCurrRoot);
 
-	void add(const char* key, const T& data, Node*& currRoot);
-	void remove(const char* key, Node*& currRoot);
+	void add(const char* key, const T& data, TSTNode*& currRoot);
+	void remove(const char* key, TSTNode*& currRoot);
 
-	T* getElement(const char* key, Node* currRoot);
-	void printSubtree(Node* currRoot, char* accumWord, int accumWordIndex);
+	T* getElement(const char* key, TSTNode* currRoot);
+	void printSubtree(TSTNode* currRoot, char* accumWord, int accumWordIndex);
 public:
+	class Iterator {
+		Stack<char> word;
+		Stack< Pair<TSTNode*, bool> > iterationStack;
+	public:
+		Iterator(TSTNode* root);
+		void reachTreeBottom();
+		T& operator*();
+		Iterator& operator++();
+		Iterator& operator++(int);
+		bool isFinished();
+	};
+
 	TrenarySearchTree();
 	TrenarySearchTree(const TrenarySearchTree& other);
 	TrenarySearchTree& operator=(const TrenarySearchTree& other);
 	~TrenarySearchTree();
+
+	Iterator begin();
 
 	void add(const char* key, const T& data);
 	void remove(const char* key);

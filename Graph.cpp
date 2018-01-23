@@ -95,6 +95,8 @@ void Graph::addNode(const char* nodeId) {
 }
 
 void Graph::removeNode(const char* nodeId) {
+	Node* oldNode = nodes.getElement(nodeId);
+	// TODO: iterate other nodes and delete this neighbour
 	nodes.remove(nodeId);
 }
 
@@ -106,6 +108,9 @@ void Graph::addArc(const char* nodeId1, const char* nodeId2, int weight) {
 
 	if(node1 != NULL && node2 != NULL) {
 		node1->addNeighbour(node2, weight);
+		if(!directed) {
+			node2->addNeighbour(node1, weight);
+		}
 	}
 }
 

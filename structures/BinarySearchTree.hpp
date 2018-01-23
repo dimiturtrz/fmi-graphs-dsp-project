@@ -5,6 +5,46 @@
 template<typename T>
 BinarySearchTree<T>::BSTNode::BSTNode(T data, BSTNode* left, BSTNode* right): data(data) {}
 
+// ------------------------------ INTERATOR ---------------------------------
+
+template<typename T>
+BinarySearchTree<T>::Iterator::Iterator(BSTNode* root) {
+	while (root != NULL) {
+		iterationStack.push(root);
+		root = root->left;
+	}
+}
+
+template<typename T>
+T& BinarySearchTree<T>::Iterator::operator*() {
+	return (iterationStack.getTop())->data;
+}
+
+template<typename T>
+typename BinarySearchTree<T>::Iterator& BinarySearchTree<T>::Iterator::operator++() {
+	BSTNode* node = iterationStack.getTop();
+	iterationStack.pop();
+	if(node->right != NULL) {
+		node = node->right;
+		while (node != NULL) {
+			iterationStack.push(node);
+			node = node->left;
+		}
+	}
+}
+
+template<typename T>
+typename BinarySearchTree<T>::Iterator& BinarySearchTree<T>::Iterator::operator++(int) {
+	Iterator currValue(*this);
+	*this = ++(*this);
+	return currValue;
+}
+
+template<typename T>
+bool BinarySearchTree<T>::Iterator::isFinished() {
+	return iterationStack.isEmpty();
+}
+
 // -------------------------------- TREE ------------------------------------
 
 // ---------------------------- CLEAR HELPER
@@ -78,6 +118,13 @@ BinarySearchTree<T>& BinarySearchTree<T>::operator=(const BinarySearchTree& othe
 template<typename T>
 BinarySearchTree<T>::~BinarySearchTree() {
 	clear();
+}
+
+// -------------------------- ITERATOR
+
+template<typename T>
+typename BinarySearchTree<T>::Iterator BinarySearchTree<T>::begin() {
+	return Iterator(root);
 }
 
 // ---------------------------- ADD

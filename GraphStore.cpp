@@ -145,10 +145,10 @@ void GraphStore::deleteNode(const char* existingNodeId) {
 // ---------------------------- ARC METHODS ------------------------------
 
 void GraphStore::createArc(const char* nodeId1, const char* nodeId2, int weight) {
-	return graph->addArc(nodeId1, nodeId2, weight);
+	graph->addArc(nodeId1, nodeId2, weight);
 }
 void GraphStore::deleteArc(const char* nodeId1, const char* nodeId2) {
-	return graph->removeArc(nodeId1, nodeId2);
+	graph->removeArc(nodeId1, nodeId2);
 }
 
 // --------------------------- SEARCH ALGORITMS ---------------------------
