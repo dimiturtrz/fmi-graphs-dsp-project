@@ -96,8 +96,10 @@ void Graph::addNode(const char* nodeId) {
 
 void Graph::removeNode(const char* nodeId) {
 	Node* oldNode = nodes.getElement(nodeId);
-	// TODO: iterate other nodes and delete this neighbour
 	nodes.remove(nodeId);
+	for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
+		(*iter).removeNeighbour(oldNode);
+	}
 }
 
 // -------------------------- ARC METHODS --------------------------
