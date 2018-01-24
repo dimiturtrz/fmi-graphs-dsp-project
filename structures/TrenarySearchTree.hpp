@@ -1,6 +1,6 @@
 #include <iostream>
 
-// -------------------------------- NODE ------------------------------------
+// -------------------------------- TSTNode ------------------------------------
 
 template<typename T>
 void TrenarySearchTree<T>::TSTNode::clear() {
@@ -19,71 +19,66 @@ void TrenarySearchTree<T>::TSTNode::copy(const TrenarySearchTree<T>::TSTNode& ot
 // ------------------------------ ITERATOR ----------------------------------
 
 template<typename T>
-TrenarySearchTree<T>::Iterator::Iterator(TSTNode* root) {
-    iterationStack.push(Pair<TSTNode*, bool>(root, false));
-	reachTreeBottom();
+TrenarySearchTree<T>::Iterator::Iterator(TSTNode* root): root(root), lastPop(NULL), lastVisited(NULL) {
+    iterationStack.push(root);
+	sink();
+	lastVisited = iterationStack.getTop();
 }
 
 template<typename T>
-void TrenarySearchTree<T>::Iterator::reachTreeBottom() {
-    TSTNode* root = iterationStack.getTop().first;
-	while(root->lo != NULL || root->equal != NULL) {
-        iterationStack.pop();
-		if(root->hi != NULL) {
-			iterationStack.push(Pair<TSTNode*, bool>(root->hi, false));
-		}
+void TrenarySearchTree<T>::Iterator::sink() {
+    TSTNode* top = iterationStack.getTop();
 
-        iterationStack.push(Pair<TSTNode*, bool>(root, true));
-		if(root->equal != NULL) {
-            iterationStack.push(Pair<TSTNode*, bool>(root->equal, false));
-		}
+	while(top->lo != NULL || top->equal != NULL || top->hi != NULL) {
+		if(top->lo != NULL && lastPop != top->lo &&
+            (lastPop != top->equal || top->equal ==NULL) &&
+            (lastPop != top->hi || top->hi == NULL)) {
+            top = top->lo;
+        } else if(top->equal != NULL && lastPop != top->equal && (lastPop != top->hi || top->hi == NULL)) {
+            top = top->equal;
+        } else if(top->hi != NULL && lastPop != top->hi) {
+            top = top->hi;
+        } else {
+            break;
+        }
+        iterationStack.push(top);
+	}
+}
 
-		if(root->lo != NULL) {
-			root = root->lo;
-            word.pop();
-            word.push(root->character);
-            iterationStack.push(Pair<TSTNode*, bool>(root, false));
-		} else {
-			root = root->equal;
-			word.push(root->character);
+template<typename T>
+void TrenarySearchTree<T>::Iterator::emerge() {
+    TSTNode* top = iterationStack.getTop();
+
+    int branching = (top->hi != NULL) + (top->equal != NULL) + (top->lo != NULL);
+    bool nodeFinished = (top->equal == lastPop && top->hi == NULL) || top->hi == lastPop;
+	while((branching < 2 || nodeFinished) && (top->data == NULL || top == lastVisited) && !isFinished()) {
+        lastPop = top;
+		iterationStack.pop();
+		if(isFinished()) {
+            break;
 		}
+		top = iterationStack.getTop();
+        branching = (top->hi != NULL) + (top->equal != NULL) + (top->lo != NULL);
+        nodeFinished = (top->equal == lastPop && top->hi == NULL) || top->hi == lastPop;
 	}
 }
 
 template<typename T>
 T& TrenarySearchTree<T>::Iterator::operator*() {
-	TSTNode* topTSTNode = iterationStack.getTop().first;
+	TSTNode* topTSTNode = iterationStack.getTop();
 	return *(topTSTNode->data);
 }
 
 template<typename T>
 typename TrenarySearchTree<T>::Iterator& TrenarySearchTree<T>::Iterator::operator++() {
-	TSTNode *terminal, *top;
-	while(!isFinished()) {
-		terminal = iterationStack.getTop().first;
-		iterationStack.pop();
-        top = iterationStack.getTop().first;
-		while(!isFinished() && terminal == top->equal) {
-			if(top->data != NULL) {
-				return *this;
-			}
-			word.pop();
-            terminal = top;
-			iterationStack.pop();
-            if(!isFinished()) { // for empty stack
-                top = iterationStack.getTop().first;
-            }
-		}
-		if(isFinished()) {
-            break;
-		}
+    while(!isFinished() &&(iterationStack.getTop()->data == NULL || iterationStack.getTop() == lastVisited)) {
+        sink();
+        emerge();
+    }
 
-		word.pop();
-        if(!iterationStack.getTop().second) {
-            reachTreeBottom();
-            return *this;
-        }
-	}
+    if(!isFinished()) {
+        lastVisited = iterationStack.getTop();
+    }
 }
 
 template<typename T>
@@ -97,6 +92,31 @@ template<typename T>
 bool TrenarySearchTree<T>::Iterator::isFinished() {
 	return iterationStack.isEmpty();
 }
+
+template<typename T>
+void TrenarySearchTree<T>::Iterator::getWord(char*& buffer) {
+	Stack<TrenarySearchTree<T>::TSTNode*> st2;
+
+	while(!iterationStack.isEmpty()) {
+		st2.push(iterationStack.getTop());
+		iterationStack.pop();
+	}
+
+	int i = 0;
+	while(!st2.isEmpty()) {
+		if(!iterationStack.isEmpty()) {
+            i += (st2.getTop() == iterationStack.getTop()->equal) ? 1 : 0;
+            buffer[i] = st2.getTop()->character;
+		} else {
+            buffer[i] = st2.getTop()->character;
+		}
+
+		iterationStack.push(st2.getTop());
+		st2.pop();
+	}
+	buffer[i + 1] = '\0';
+}
+
 // ----------------------------- BIG FOUR
 
 template<typename T>
@@ -224,7 +244,7 @@ void TrenarySearchTree<T>::add(const char* key, const T& data) {
             root->data = new T(data);
             return;
 		}
-        add(key + 1, data, root);
+        add(key, data, root);
 	}
 }
 
@@ -236,17 +256,11 @@ void TrenarySearchTree<T>::add(const char* key, const T& data, TSTNode*& currRoo
 		return;
 	}
 
-
-	if(currRoot->equal == NULL) {
-        if(currRoot->data != NULL) {
-            key += 1;
-        }
-		currRoot->equal = new TSTNode(*key);
-        return add(key + 1, data, currRoot->equal);
-	}
-
 	if(*key == currRoot->character){
         if(*(key + 1) != '\0') {
+            if(currRoot->equal == NULL) {
+                currRoot->equal = new TSTNode(*(key + 1));
+            }
             return add(key + 1, data, currRoot->equal);
         } else {
             return add(key + 1, data, currRoot);
@@ -254,17 +268,13 @@ void TrenarySearchTree<T>::add(const char* key, const T& data, TSTNode*& currRoo
     } else if(*key > currRoot->character) {
 		if(currRoot->hi == NULL) {
 			currRoot->hi = new TSTNode(*key);
-            return add(key + 1, data, currRoot->hi);
-		} else {
-            return add(key, data, currRoot->hi);
 		}
+		return add(key, data, currRoot->hi);
 	} else if (*key < currRoot->character) {
 		if(currRoot->lo == NULL) {
 			currRoot->lo = new TSTNode(*key);
-            return add(key + 1, data, currRoot->lo);
-		} else {
-            return add(key, data, currRoot->lo);
 		}
+		return add(key, data, currRoot->lo);
 	}
 }
 
