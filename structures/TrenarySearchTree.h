@@ -47,7 +47,7 @@ public:
 		T& operator*();
 		Iterator& operator++();
 		Iterator& operator++(int);
-		void getWord(char*& buffer);
+		void getWord(char buffer[]);
 		bool isFinished();
 	};
 

@@ -94,7 +94,7 @@ bool TrenarySearchTree<T>::Iterator::isFinished() {
 }
 
 template<typename T>
-void TrenarySearchTree<T>::Iterator::getWord(char*& buffer) {
+void TrenarySearchTree<T>::Iterator::getWord(char buffer[]) {
 	Stack<TrenarySearchTree<T>::TSTNode*> st2;
 
 	while(!iterationStack.isEmpty()) {

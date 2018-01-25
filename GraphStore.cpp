@@ -97,6 +97,7 @@ GraphStore& GraphStore::operator=(const GraphStore& other) {
 }
 
 GraphStore::~GraphStore() {
+	closeGraph();
 	clear();
 }
 

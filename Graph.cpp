@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 
+#include "structures/BinarySearchTree.h"
 #include "helpers/MyStrings.h"
 #include "Graph.h"
 #include "Node.h"
@@ -43,10 +44,17 @@ void Graph::readFromFile(const char* path) {
 	clear();
 
 	char buff[1024];
+	char word[51];
 	std::ifstream inputGraphFile(path);
 
 	inputGraphFile>> directed;
 	inputGraphFile.getline(buff, 1023);
+	inputGraphFile.getline(buff, 1023);
+
+	while(inputGraphFile.peek() != '\n' && inputGraphFile.getline(buff, 1023)) {
+		strcpy(word, buff, ' ');
+		nodes.add(word, Node());
+	}
 
 	inputGraphFile.close();
 }
@@ -56,11 +64,25 @@ void Graph::writeToFile(const char* path) {
 		return;
 	}
 
-	clear();
+	char buff[51];
 
 	std::ofstream outputGraphFile(path);
 
-	outputGraphFile<< directed<< std::endl;
+	outputGraphFile<< directed<< std::endl<< std::endl;
+
+	int index = 0;
+	BinarySearchTree<EnumeratedNode> indexedNodes;
+	for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
+		iter.getWord(buff);
+		outputGraphFile<< buff<< std::endl;
+		indexedNodes.add(EnumeratedNode(&(*iter), index++));
+	}
+
+	outputGraphFile<< std::endl;
+
+	for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
+		(*iter).writeToFile(outputGraphFile, indexedNodes);
+	}
 
 	outputGraphFile.close();
 }
@@ -78,7 +100,7 @@ bool Graph::hasArc(const char* nodeId1, const char* nodeId2) {
 	if(node1 == NULL || node2 == NULL) {
 		return false;
 	}
-	
+
 	return node1->hasNeighbour(node2);
 }
 

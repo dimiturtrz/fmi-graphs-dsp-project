@@ -3,7 +3,7 @@
 // -------------------------------- NODE ------------------------------------
 
 template<typename T>
-BinarySearchTree<T>::BSTNode::BSTNode(T data, BSTNode* left, BSTNode* right): data(data) {}
+BinarySearchTree<T>::BSTNode::BSTNode(T data, BSTNode* left, BSTNode* right): data(data), left(NULL), right(NULL) {}
 
 // ------------------------------ INTERATOR ---------------------------------
 
