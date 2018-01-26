@@ -124,7 +124,7 @@ void Node::bfsVisit(Queue< Pair<Node*, int> >& queue, BinarySearchTree<Algorithm
     }
 }
 
-void Node::dfsVisit(Stack< Pair<Node*, int> >& stack, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth) {
+void Node::dfsShortVisit(Stack< Pair<Node*, int> >& stack, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth) {
     stack.pop();
     for(NeighboursBST::Iterator iter = neighbours.begin(); !iter.isFinished(); ++iter) {
         Node* endpoint = (*iter).end;
@@ -132,6 +132,29 @@ void Node::dfsVisit(Stack< Pair<Node*, int> >& stack, BinarySearchTree<Algorithm
         if(algorithmNode.getCost() == -1 || algorithmNode.getCost() > depth + 1) {
             algorithmNode.changeOptimalReach(depth + 1, this);
             stack.push(Pair<Node*, int>(endpoint, depth + 1));
+        }
+    }
+}
+
+void Node::dfsLongVisit(Stack< Pair<Node*, int> >& stack, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth) {
+    stack.pop();
+    for(NeighboursBST::Iterator iter = neighbours.begin(); !iter.isFinished(); ++iter) {
+        Node* endpoint = (*iter).end;
+        AlgorithmNode& algorithmNode = *(optimalityTable.getElement(AlgorithmNode(endpoint)));
+        if(algorithmNode.getCost() < depth + 1) {
+            algorithmNode.changeOptimalReach(depth + 1, this);
+            stack.push(Pair<Node*, int>(endpoint, depth + 1));
+        }
+    }
+}
+
+void Node::dijkstraVisit(Queue< Pair<Node*, int> >& queue, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth) {
+    for(NeighboursBST::Iterator iter = neighbours.begin(); !iter.isFinished(); ++iter) {
+        Node* endpoint = (*iter).end;
+        AlgorithmNode& algorithmNode = *(optimalityTable.getElement(AlgorithmNode(endpoint)));
+        if(algorithmNode.getCost() == -1 || algorithmNode.getCost() > depth + (*iter).weight) {
+            algorithmNode.changeOptimalReach(depth + (*iter).weight, this);
+            queue.enqueue(Pair<Node*, int>(endpoint, depth + (*iter).weight));
         }
     }
 }

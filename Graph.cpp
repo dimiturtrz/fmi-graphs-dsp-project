@@ -254,7 +254,7 @@ void Graph::dfsShortest(const char* nodeId1, const char* nodeId2) {
     while(!dfsStack.isEmpty()) {
         Node* topNode = dfsStack.getTop().first;
         if(topNode != node2) {
-            topNode->dfsVisit(dfsStack, optimalityTable, depth);
+            topNode->dfsShortVisit(dfsStack, optimalityTable, depth);
         } else {
             pathFound = true;
             break;
@@ -288,6 +288,105 @@ void Graph::dfsShortest(const char* nodeId1, const char* nodeId2) {
     }
     std::cout<< std::endl;
 }
-void Graph::dfsLongest(const char* nodeId1, const char* nodeId2) {}
-void Graph::dijkstra(const char* nodeId1, const char* nodeId2) {}
+void Graph::dfsLongest(const char* nodeId1, const char* nodeId2) {
+	Node* node1 = nodes.getElement(nodeId1);
+	Node* node2 = nodes.getElement(nodeId2);
+
+	if(node1 == NULL || node2 == NULL) {
+		return;
+	}
+
+    BinarySearchTree<AlgorithmNode> optimalityTable;
+    for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
+		optimalityTable.add(AlgorithmNode(&(*iter)));
+	}
+
+	bool pathFound = false;
+
+    int depth = 0;
+    Stack< Pair<Node*, int> > dfsStack;
+    dfsStack.push(Pair<Node*, int>(node1, depth));
+    while(!dfsStack.isEmpty()) {
+        Node* topNode = dfsStack.getTop().first;
+        topNode->dfsLongVisit(dfsStack, optimalityTable, depth);
+    }
+
+    if(optimalityTable.getElement(AlgorithmNode(node2))->getParentAddress() == NULL) {
+        std::cout<< "no path found"<< std::endl;
+        return;
+    }
+    std::cout<< "path found: "<< std::endl;
+
+    Stack<Node*> pathStack;
+    AlgorithmNode pathElement = *(optimalityTable.getElement(AlgorithmNode(node2)));
+    while(pathElement.getAddress() != node1) {
+        pathStack.push(pathElement.getAddress());
+        pathElement = *(optimalityTable.getElement(AlgorithmNode(pathElement.getParentAddress())));
+    }
+    pathStack.push(pathElement.getAddress());
+
+    char nodeName[51];
+    while(!pathStack.isEmpty()) {
+        for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
+            if(&(*iter) == pathStack.getTop()) {
+                iter.getWord(nodeName);
+                std::cout<< nodeName<< " ";
+                pathStack.pop();
+                break;
+            }
+        }
+    }
+    std::cout<< std::endl;
+
+}
+void Graph::dijkstra(const char* nodeId1, const char* nodeId2) {
+	Node* node1 = nodes.getElement(nodeId1);
+	Node* node2 = nodes.getElement(nodeId2);
+
+	if(node1 == NULL || node2 == NULL) {
+		return;
+	}
+
+    BinarySearchTree<AlgorithmNode> optimalityTable;
+    for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
+		optimalityTable.add(AlgorithmNode(&(*iter)));
+	}
+
+    int depth = 0;
+    Queue< Pair<Node*, int> > bfsQueue;
+    bfsQueue.enqueue(Pair<Node*, int>(node1, depth));
+    while(!bfsQueue.isEmpty()) {
+        Node* topNode = bfsQueue.getFront().first;
+        topNode->dijkstraVisit(bfsQueue, optimalityTable, depth);
+        bfsQueue.dequeue();
+    }
+
+    if(optimalityTable.getElement(AlgorithmNode(node2))->getParentAddress() == NULL) {
+        std::cout<< "no path found"<< std::endl;
+        return;
+    }
+    std::cout<< "path found: "<< std::endl;
+    std::cout<< "cost: "<< optimalityTable.getElement(AlgorithmNode(node2))->getCost()<< std::endl;
+
+    Stack<Node*> pathStack;
+    AlgorithmNode pathElement = *(optimalityTable.getElement(AlgorithmNode(node2)));
+    while(pathElement.getAddress() != node1) {
+        pathStack.push(pathElement.getAddress());
+        pathElement = *(optimalityTable.getElement(AlgorithmNode(pathElement.getParentAddress())));
+    }
+    pathStack.push(pathElement.getAddress());
+
+    char nodeName[51];
+    while(!pathStack.isEmpty()) {
+        for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
+            if(&(*iter) == pathStack.getTop()) {
+                iter.getWord(nodeName);
+                std::cout<< nodeName<< " ";
+                pathStack.pop();
+                break;
+            }
+        }
+    }
+    std::cout<< std::endl;
+}
 

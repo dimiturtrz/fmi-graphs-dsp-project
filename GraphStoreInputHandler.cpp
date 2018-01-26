@@ -22,7 +22,7 @@ bool GraphStoreInputHandler::createGraph(const char* arguments) {
 		graphStore.createGraph(graphId, false);
 		return true;
 	}
-	if(strcmp(remainingSubstring, "directed", ' ') == 0 && getNextWordStart(remainingSubstring) == '\0') {
+	if(strcmp(remainingSubstring, "directed", ' ') == 0 && *getNextWordStart(remainingSubstring) == '\0') {
 		graphStore.createGraph(graphId, true);
 		return true;
 	}
@@ -35,7 +35,7 @@ bool GraphStoreInputHandler::useGraph(const char* id) {
 		strcpy(errorMessage, "graph with that id doesn't exist");
 		return false;
 	}
-	
+
 	graphStore.useGraph(id);
 	return true;
 }
@@ -45,7 +45,7 @@ bool GraphStoreInputHandler::deleteGraph(const char* id) {
 		strcpy(errorMessage, "graph with that id doesn't exist");
 		return false;
 	}
-	
+
 	graphStore.deleteGraph(id);
 	return true;
 }
@@ -108,12 +108,12 @@ bool GraphStoreInputHandler::createArc(const char* arguments) {
 		strcpy(errorMessage, "incorrect arguments format");
 		return false;
 	}
-	
+
 	if(!graphStore.nodeExists(nodeId1) || !graphStore.nodeExists(nodeId2)) {
 		strcpy(errorMessage, "one or both nodes with that id don't exist");
 		return false;
 	}
-	
+
 	graphStore.createArc(nodeId1, nodeId2, arcWeight);
 	return true;
 }
@@ -147,7 +147,7 @@ bool GraphStoreInputHandler::deleteArc(const char* arguments) {
 		strcpy(errorMessage, "arc don't exist");
 		return false;
 	}
-	
+
 	graphStore.deleteArc(nodeId1, nodeId2);
 	return true;
 }
@@ -155,7 +155,7 @@ bool GraphStoreInputHandler::deleteArc(const char* arguments) {
 // ---------------------------- SEARCH METHODS
 
 bool GraphStoreInputHandler::searchPath(const char* arguments) {
-	
+
 	const char* remainingInput = arguments;
 
 	char* nodeId1 = new char[strlen(remainingInput, ' ') + 1];
@@ -174,7 +174,7 @@ bool GraphStoreInputHandler::searchPath(const char* arguments) {
 		strcpy(errorMessage, "incorrect arguments format");
 		return false;
 	}
-	
+
 	if(!graphStore.nodeExists(nodeId1) || !graphStore.nodeExists(nodeId2)) {
 		strcpy(errorMessage, "one or both nodes with that id don't exist");
 		return false;
@@ -219,6 +219,8 @@ bool GraphStoreInputHandler::interpretInput(const char* commandVerb, const char*
 			return deleteGraph(arguments);
 		} else if(strcmp(commandSubject, "NODE") == 0) {
 			return deleteNode(arguments);
+		} else if(strcmp(commandSubject, "ARC") == 0) {
+			return deleteArc(arguments);
 		}
 	} else if(strcmp(commandVerb, "USE") == 0) {
 		if(strcmp(commandSubject, "GRAPH") == 0) {

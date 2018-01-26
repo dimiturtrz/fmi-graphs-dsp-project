@@ -156,7 +156,7 @@ void BinarySearchTree<T>::remove(const T& data) {
         return remove(data, root);
     }
 
-    removeBSTNode(root);
+    root = removeBSTNode(root);
 }
 
 template<typename T>
@@ -257,3 +257,5 @@ T* BinarySearchTree<T>::getElement(const T& data, BSTNode* currRoot) {
 		return &(currRoot->data);
 	}
 }
+
+
