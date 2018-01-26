@@ -3,6 +3,7 @@
 
 #include "structures/Pair.h"
 #include "structures/Queue.h"
+#include "structures/Stack.h"
 #include "structures/BinarySearchTree.h"
 
 #ifndef NODE
@@ -38,6 +39,7 @@ public:
 	void writeToFile(std::ofstream& outputGraphFile, BinarySearchTree<EnumeratedNode> indexedNodes);
 
 	void bfsVisit(Queue< Pair<Node*, int> >& queue, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth);
+	void dfsVisit(Stack< Pair<Node*, int> >& stack, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth);
 };
 
 class EnumeratedNode {

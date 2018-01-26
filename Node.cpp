@@ -123,3 +123,15 @@ void Node::bfsVisit(Queue< Pair<Node*, int> >& queue, BinarySearchTree<Algorithm
         }
     }
 }
+
+void Node::dfsVisit(Stack< Pair<Node*, int> >& stack, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth) {
+    stack.pop();
+    for(NeighboursBST::Iterator iter = neighbours.begin(); !iter.isFinished(); ++iter) {
+        Node* endpoint = (*iter).end;
+        AlgorithmNode& algorithmNode = *(optimalityTable.getElement(AlgorithmNode(endpoint)));
+        if(algorithmNode.getCost() == -1 || algorithmNode.getCost() > depth + 1) {
+            algorithmNode.changeOptimalReach(depth + 1, this);
+            stack.push(Pair<Node*, int>(endpoint, depth + 1));
+        }
+    }
+}
