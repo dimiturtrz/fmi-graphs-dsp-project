@@ -5,6 +5,10 @@
 #ifndef GRAPH
 #define GRAPH
 
+enum SearchAlgorithm {
+    BFS, DFS_Shortest, DFS_Longest, Dijkstra
+};
+
 class Graph {
 	TrenarySearchTree<Node> nodes;
 	char id[51];
@@ -32,10 +36,12 @@ public:
 	void addArc(const char* nodeId1, const char* nodeId2, int weight);
 	void removeArc(const char* nodeId1, const char* nodeId2);
 
-	void bfs(const char* nodeId1, const char* nodeId2);
-	void dfsShortest(const char* nodeId1, const char* nodeId2);
-	void dfsLongest(const char* nodeId1, const char* nodeId2);
-	void dijkstra(const char* nodeId1, const char* nodeId2);
+    void searchAlgorithm(const char* nodeId1, const char* nodeId2, SearchAlgorithm searchAlgorithm);
+
+	void bfs(Node* node1, Node* node2, BinarySearchTree<AlgorithmNode>& optimalityTable);
+	void dfsShortest(Node* node1, Node* node2, BinarySearchTree<AlgorithmNode>& optimalityTable);
+	void dfsLongest(Node* node1, Node* node2, BinarySearchTree<AlgorithmNode>& optimalityTable);
+	int dijkstra(Node* node1, Node* node2, BinarySearchTree<AlgorithmNode>& optimalityTable);
 };
 
 #endif

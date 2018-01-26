@@ -176,7 +176,8 @@ void Graph::removeArc(const char* nodeId1, const char* nodeId2) {
 
 // ------------------------ SEARCH METHODS ------------------------
 
-void Graph::bfs(const char* nodeId1, const char* nodeId2) {
+void Graph::searchAlgorithm(const char* nodeId1, const char* nodeId2, SearchAlgorithm searchAlgorithm) {
+
 	Node* node1 = nodes.getElement(nodeId1);
 	Node* node2 = nodes.getElement(nodeId2);
 
@@ -188,7 +189,56 @@ void Graph::bfs(const char* nodeId1, const char* nodeId2) {
     for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
 		optimalityTable.add(AlgorithmNode(&(*iter)));
 	}
+	optimalityTable.getElement(AlgorithmNode(node1))->changeOptimalReach(0, NULL);
 
+    int dijkstraCost = 0;
+    switch(searchAlgorithm) {
+        case BFS:
+            bfs(node1, node2, optimalityTable);
+            break;
+        case DFS_Shortest:
+            dfsShortest(node1, node2, optimalityTable);
+            break;
+        case DFS_Longest:
+            dfsLongest(node1, node2, optimalityTable);
+            break;
+        case Dijkstra:
+            dijkstraCost = dijkstra(node1, node2, optimalityTable);
+            break;
+    }
+
+    if(optimalityTable.getElement(AlgorithmNode(node2))->getParentAddress() == NULL) {
+        std::cout<< "no path found"<< std::endl;
+        return;
+    }
+    std::cout<< "path found: "<< std::endl;
+    if(searchAlgorithm == Dijkstra) {
+        std::cout<< "cost: "<< dijkstraCost<< std::endl;
+    }
+
+    Stack<Node*> pathStack;
+    AlgorithmNode pathElement = *(optimalityTable.getElement(AlgorithmNode(node2)));
+    while(pathElement.getAddress() != node1) {
+        pathStack.push(pathElement.getAddress());
+        pathElement = *(optimalityTable.getElement(AlgorithmNode(pathElement.getParentAddress())));
+    }
+    pathStack.push(pathElement.getAddress());
+
+    char nodeName[51];
+    while(!pathStack.isEmpty()) {
+        for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
+            if(&(*iter) == pathStack.getTop()) {
+                iter.getWord(nodeName);
+                std::cout<< nodeName<< " ";
+                pathStack.pop();
+                break;
+            }
+        }
+    }
+    std::cout<< std::endl;
+}
+
+void Graph::bfs(Node* node1, Node* node2, BinarySearchTree<AlgorithmNode>& optimalityTable) {
     Queue< Pair<Node*, int> > bfsQueue;
     bfsQueue.enqueue(Pair<Node*, int>(node1, 0));
     while(!bfsQueue.isEmpty()) {
@@ -201,149 +251,25 @@ void Graph::bfs(const char* nodeId1, const char* nodeId2) {
         }
     }
 
-    if(optimalityTable.getElement(AlgorithmNode(node2))->getParentAddress() == NULL) {
-        std::cout<< "no path found"<< std::endl;
-        return;
-    }
-    std::cout<< "path found: "<< std::endl;
-
-    Stack<Node*> pathStack;
-    AlgorithmNode pathElement = *(optimalityTable.getElement(AlgorithmNode(node2)));
-    while(pathElement.getAddress() != node1) {
-        pathStack.push(pathElement.getAddress());
-        pathElement = *(optimalityTable.getElement(AlgorithmNode(pathElement.getParentAddress())));
-    }
-    pathStack.push(pathElement.getAddress());
-
-    char nodeName[51];
-    while(!pathStack.isEmpty()) {
-        for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
-            if(&(*iter) == pathStack.getTop()) {
-                iter.getWord(nodeName);
-                std::cout<< nodeName<< " ";
-                pathStack.pop();
-                break;
-            }
-        }
-    }
-    std::cout<< std::endl;
-
 }
-void Graph::dfsShortest(const char* nodeId1, const char* nodeId2) {
-	Node* node1 = nodes.getElement(nodeId1);
-	Node* node2 = nodes.getElement(nodeId2);
-
-	if(node1 == NULL || node2 == NULL) {
-		return;
-	}
-
-    BinarySearchTree<AlgorithmNode> optimalityTable;
-    for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
-		optimalityTable.add(AlgorithmNode(&(*iter)));
-	}
-	optimalityTable.getElement(AlgorithmNode(node1))->changeOptimalReach(0, NULL);
-
+void Graph::dfsShortest(Node* node1, Node* node2, BinarySearchTree<AlgorithmNode>& optimalityTable) {
     Stack< Pair<Node*, int> > dfsStack;
     dfsStack.push(Pair<Node*, int>(node1, 0));
     while(!dfsStack.isEmpty()) {
         Node* topNode = dfsStack.getTop().first;
-        if(topNode != node2) {
-            topNode->dfsShortVisit(dfsStack, optimalityTable);
-        } else {
-            break;
-        }
+        topNode->dfsShortVisit(dfsStack, optimalityTable);
     }
-
-    if(optimalityTable.getElement(AlgorithmNode(node2))->getParentAddress() == NULL) {
-        std::cout<< "no path found"<< std::endl;
-        return;
-    }
-    std::cout<< "path found: "<< std::endl;
-
-    Stack<Node*> pathStack;
-    AlgorithmNode pathElement = *(optimalityTable.getElement(AlgorithmNode(node2)));
-    while(pathElement.getAddress() != node1) {
-        pathStack.push(pathElement.getAddress());
-        pathElement = *(optimalityTable.getElement(AlgorithmNode(pathElement.getParentAddress())));
-    }
-    pathStack.push(pathElement.getAddress());
-
-    char nodeName[51];
-    while(!pathStack.isEmpty()) {
-        for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
-            if(&(*iter) == pathStack.getTop()) {
-                iter.getWord(nodeName);
-                std::cout<< nodeName<< " ";
-                pathStack.pop();
-                break;
-            }
-        }
-    }
-    std::cout<< std::endl;
 }
-void Graph::dfsLongest(const char* nodeId1, const char* nodeId2) {
-	Node* node1 = nodes.getElement(nodeId1);
-	Node* node2 = nodes.getElement(nodeId2);
-
-	if(node1 == NULL || node2 == NULL) {
-		return;
-	}
-
-    BinarySearchTree<AlgorithmNode> optimalityTable;
-    for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
-		optimalityTable.add(AlgorithmNode(&(*iter)));
-	}
-	optimalityTable.getElement(AlgorithmNode(node1))->changeOptimalReach(0, NULL);
-
+void Graph::dfsLongest(Node* node1, Node* node2, BinarySearchTree<AlgorithmNode>& optimalityTable) {
     Stack< Pair<Node*, int> > dfsStack;
     dfsStack.push(Pair<Node*, int>(node1, 0));
     while(!dfsStack.isEmpty()) {
         Node* topNode = dfsStack.getTop().first;
         topNode->dfsLongVisit(dfsStack, optimalityTable);
     }
-
-    if(optimalityTable.getElement(AlgorithmNode(node2))->getParentAddress() == NULL) {
-        std::cout<< "no path found"<< std::endl;
-        return;
-    }
-    std::cout<< "path found: "<< std::endl;
-
-    Stack<Node*> pathStack;
-    AlgorithmNode pathElement = *(optimalityTable.getElement(AlgorithmNode(node2)));
-    while(pathElement.getAddress() != node1) {
-        pathStack.push(pathElement.getAddress());
-        pathElement = *(optimalityTable.getElement(AlgorithmNode(pathElement.getParentAddress())));
-    }
-    pathStack.push(pathElement.getAddress());
-
-    char nodeName[51];
-    while(!pathStack.isEmpty()) {
-        for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
-            if(&(*iter) == pathStack.getTop()) {
-                iter.getWord(nodeName);
-                std::cout<< nodeName<< " ";
-                pathStack.pop();
-                break;
-            }
-        }
-    }
-    std::cout<< std::endl;
-
 }
-void Graph::dijkstra(const char* nodeId1, const char* nodeId2) {
-	Node* node1 = nodes.getElement(nodeId1);
-	Node* node2 = nodes.getElement(nodeId2);
 
-	if(node1 == NULL || node2 == NULL) {
-		return;
-	}
-
-    BinarySearchTree<AlgorithmNode> optimalityTable;
-    for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
-		optimalityTable.add(AlgorithmNode(&(*iter)));
-	}
-	optimalityTable.getElement(AlgorithmNode(node1))->changeOptimalReach(0, NULL);
-
+int Graph::dijkstra(Node* node1, Node* node2, BinarySearchTree<AlgorithmNode>& optimalityTable) {
     Queue< Pair<Node*, int> > bfsQueue;
     bfsQueue.enqueue(Pair<Node*, int>(node1, 0));
     while(!bfsQueue.isEmpty()) {
@@ -352,32 +278,6 @@ void Graph::dijkstra(const char* nodeId1, const char* nodeId2) {
         bfsQueue.dequeue();
     }
 
-    if(optimalityTable.getElement(AlgorithmNode(node2))->getParentAddress() == NULL) {
-        std::cout<< "no path found"<< std::endl;
-        return;
-    }
-    std::cout<< "path found: "<< std::endl;
-    std::cout<< "cost: "<< optimalityTable.getElement(AlgorithmNode(node2))->getCost()<< std::endl;
-
-    Stack<Node*> pathStack;
-    AlgorithmNode pathElement = *(optimalityTable.getElement(AlgorithmNode(node2)));
-    while(pathElement.getAddress() != node1) {
-        pathStack.push(pathElement.getAddress());
-        pathElement = *(optimalityTable.getElement(AlgorithmNode(pathElement.getParentAddress())));
-    }
-    pathStack.push(pathElement.getAddress());
-
-    char nodeName[51];
-    while(!pathStack.isEmpty()) {
-        for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
-            if(&(*iter) == pathStack.getTop()) {
-                iter.getWord(nodeName);
-                std::cout<< nodeName<< " ";
-                pathStack.pop();
-                break;
-            }
-        }
-    }
-    std::cout<< std::endl;
+    return optimalityTable.getElement(AlgorithmNode(node2))->getCost();
 }
 

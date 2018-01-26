@@ -155,16 +155,16 @@ void GraphStore::deleteArc(const char* nodeId1, const char* nodeId2) {
 // --------------------------- SEARCH ALGORITMS ---------------------------
 
 void GraphStore::bfs(const char* nodeId1, const char* nodeId2) {
-	return graph->bfs(nodeId1, nodeId2);
+	return graph->searchAlgorithm(nodeId1, nodeId2, BFS);
 }
 void GraphStore::dfsShortest(const char* nodeId1, const char* nodeId2) {
-	return graph->dfsShortest(nodeId1, nodeId2);
+	return graph->searchAlgorithm(nodeId1, nodeId2, DFS_Shortest);
 }
 void GraphStore::dfsLongest(const char* nodeId1, const char* nodeId2) {
-	return graph->dfsLongest(nodeId1, nodeId2);
+	return graph->searchAlgorithm(nodeId1, nodeId2, DFS_Longest);
 }
 void GraphStore::dijkstra(const char* nodeId1, const char* nodeId2) {
-	return graph->dijkstra(nodeId1, nodeId2);
+	return graph->searchAlgorithm(nodeId1, nodeId2, Dijkstra);
 }
 
 
