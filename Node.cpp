@@ -52,18 +52,11 @@ void Node::NeighboursBST::removeNeighbour(Node* neighbour) {
 // -------------------------- FILE WRITE ------------------------------
 
 void Node::writeToFile(std::ofstream& outputGraphFile, BinarySearchTree<EnumeratedNode> indexedNodes) {
-	bool first = true;
 	for(NeighboursBST::Iterator iter = neighbours.begin(); !iter.isFinished(); ++iter) {
-		if(!first) {
-			outputGraphFile<< ", ";
-		}
-		first = false;
-
 		Arc arcToWrite = *iter;
 		int endNodeIndex = indexedNodes.getElement(EnumeratedNode(arcToWrite.end, -1))->getIndex();
-		outputGraphFile<< endNodeIndex<< " "<< arcToWrite.weight;
+		outputGraphFile<< endNodeIndex<< " "<< arcToWrite.weight<< ", ";;
 	}
-	outputGraphFile<< std::endl;
 }
 
 // ---------------------------- NODE ----------------------------------

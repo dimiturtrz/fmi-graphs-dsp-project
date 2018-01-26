@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 
+#include "structures/Vector.h"
 #include "structures/BinarySearchTree.h"
 #include "helpers/MyStrings.h"
 #include "Graph.h"
@@ -51,9 +52,31 @@ void Graph::readFromFile(const char* path) {
 	inputGraphFile.getline(buff, 1023);
 	inputGraphFile.getline(buff, 1023);
 
+	Vector<Node*> indexedNodes;
 	while(inputGraphFile.peek() != '\n' && inputGraphFile.getline(buff, 1023)) {
 		strcpy(word, buff, ' ');
-		nodes.add(word, Node());
+		Node newNode;
+		nodes.add(word, newNode);
+		indexedNodes.add(nodes.getElement(word));
+	}
+
+	inputGraphFile.getline(buff, 1023);
+
+	int newIndex = 0, newWeight = 0;
+	int totalNodes = indexedNodes.getSize();
+
+	for(int index = 0; index < totalNodes; ++index) {
+		while(inputGraphFile.peek() != '\n') {
+            inputGraphFile.getline(word, 50, ' ');
+            newIndex = getNuberFromWord(word);
+            inputGraphFile.getline(word, 50, ',');
+            newWeight = getNuberFromWord(word);
+			indexedNodes[index]->addNeighbour(indexedNodes[newIndex], newWeight);
+			if(inputGraphFile.peek() == ' '){
+				inputGraphFile.ignore();
+			}
+		}
+        inputGraphFile.getline(buff, 1023);
 	}
 
 	inputGraphFile.close();
@@ -82,6 +105,7 @@ void Graph::writeToFile(const char* path) {
 
 	for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
 		(*iter).writeToFile(outputGraphFile, indexedNodes);
+		outputGraphFile<< std::endl;
 	}
 
 	outputGraphFile.close();

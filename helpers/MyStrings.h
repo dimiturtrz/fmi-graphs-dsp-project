@@ -15,5 +15,6 @@ void removeLastComponentFromPath(char*& path);
 
 const char* getNextWordStart(const char* str);
 int getWeightFromWord(const char* wordStart);
+int getNuberFromWord(const char* wordStart);
 
 #endif

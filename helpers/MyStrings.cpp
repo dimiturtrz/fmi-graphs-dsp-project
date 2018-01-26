@@ -61,6 +61,16 @@ int getWeightFromWord(const char* wordStart) {
 	return accum;
 }
 
+int getNuberFromWord(const char* wordStart) {
+
+	int accum = 0;
+	for(int i = 0, multiply = 10; wordStart[i] >= '0' && wordStart[i] <= '9'; ++i) {
+		accum = accum*multiply + (wordStart[i] - '0');
+	}
+
+	return accum;
+}
+
 // ------------------------------- DYNAMIC -------------------------------
 
 void dynamicStrcpy(char*& destination, const char* source) {
