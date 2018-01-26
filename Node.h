@@ -11,6 +11,7 @@
 
 class EnumeratedNode;
 class AlgorithmNode;
+class DFSLongStack;
 
 class Node {
 	struct Arc {

@@ -2,12 +2,13 @@
 #define STACK_H
 
 template<class T>
-class Stack {
-	struct Node {
+class Stack { // with an intruding mehtod;
+protected:
+	struct StackNode {
 		T data;
-		Node* next;
+		StackNode* next;
 
-		Node(const T& data, Node* next = NULL);
+		StackNode(const T& data, StackNode* next = NULL);
 	} * top;
 
 	void copy(const Stack& other);

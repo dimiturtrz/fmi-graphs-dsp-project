@@ -143,6 +143,9 @@ void Node::dfsShortVisit(Stack< Pair<Node*, int> >& stack, BinarySearchTree<Algo
 void Node::dfsLongVisit(Stack< Pair<Node*, int> >& stack, BinarySearchTree<AlgorithmNode>& optimalityTable) {
     stack.pop();
     int currDepth = optimalityTable.getElement(AlgorithmNode(this))->getCost();
+    if(currDepth > 100000000) {
+        throw;
+    }
     for(NeighboursBST::Iterator iter = neighbours.begin(); !iter.isFinished(); ++iter) {
         Node* arcEndpoint = (*iter).end;
         AlgorithmNode& algorithmNode = *(optimalityTable.getElement(AlgorithmNode(arcEndpoint)));

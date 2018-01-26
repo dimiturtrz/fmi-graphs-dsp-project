@@ -6,14 +6,14 @@
 #include "Stack.h"
 
 template<typename T>
-Stack<T>::Node::Node(const T& data, Stack::Node* next): data(data), next(next) {}
+Stack<T>::StackNode::StackNode(const T& data, Stack::StackNode* next): data(data), next(next) {}
 
 template<typename T>
 void Stack<T>::copy(const Stack& other) {
 	clear();
-	for(Stack::Node *thisIter = top, *otherIter = other.top;
+	for(Stack::StackNode *thisIter = top, *otherIter = other.top;
 			otherIter != NULL; otherIter = otherIter->next) {
-		thisIter = new Node(otherIter->data);
+		thisIter = new StackNode(otherIter->data);
 	}
 }
 
@@ -23,7 +23,7 @@ void Stack<T>::clear() {
         return;
     }
 
-	Stack::Node* iter = top->next;
+	Stack::StackNode* iter = top->next;
 	while(iter != NULL) {
 		delete top;
 		top = iter;
@@ -70,9 +70,9 @@ T& Stack<T>::getTop() {
 
 template<typename T>
 void Stack<T>::push(const T& data) {
-	Stack::Node* newNode = new Node(data);
-	newNode->next = top;
-	top = newNode;
+	Stack::StackNode* newStackNode = new StackNode(data);
+	newStackNode->next = top;
+	top = newStackNode;
 }
 
 template<typename T>
@@ -81,7 +81,7 @@ void Stack<T>::pop() {
         return;
     }
 
-	Stack::Node* oldTop = top;
+	Stack::StackNode* oldTop = top;
 	top = top->next;
 	delete oldTop;
 }
