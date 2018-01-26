@@ -125,7 +125,7 @@ void GraphStore::useGraph(const char* existingGraphId) {
 }
 
 void GraphStore::deleteGraph(const char* existingGraphId) {
-    if(strcmp(existingGraphId, graph->getId()) == 0) {
+    if(graph != NULL && strcmp(existingGraphId, graph->getId()) == 0) {
         closeGraph();
     }
 
@@ -155,16 +155,16 @@ void GraphStore::deleteArc(const char* nodeId1, const char* nodeId2) {
 // --------------------------- SEARCH ALGORITMS ---------------------------
 
 void GraphStore::bfs(const char* nodeId1, const char* nodeId2) {
-	return ; // TODO: do
+	return graph->bfs(nodeId1, nodeId2);
 }
 void GraphStore::dfsShortest(const char* nodeId1, const char* nodeId2) {
-	return ; // TODO: do
+	return graph->dfsShortest(nodeId1, nodeId2);
 }
 void GraphStore::dfsLongest(const char* nodeId1, const char* nodeId2) {
-	return ; // TODO: do
+	return graph->dfsLongest(nodeId1, nodeId2);
 }
 void GraphStore::dijkstra(const char* nodeId1, const char* nodeId2) {
-	return ; // TODO: do
+	return graph->dijkstra(nodeId1, nodeId2);
 }
 
 

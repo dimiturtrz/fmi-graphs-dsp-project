@@ -7,7 +7,7 @@
 
 class Graph {
 	TrenarySearchTree<Node> nodes;
-	char id[50];
+	char id[51];
 	bool directed;
 
 	void clear();
@@ -31,6 +31,11 @@ public:
 
 	void addArc(const char* nodeId1, const char* nodeId2, int weight);
 	void removeArc(const char* nodeId1, const char* nodeId2);
+
+	void bfs(const char* nodeId1, const char* nodeId2);
+	void dfsShortest(const char* nodeId1, const char* nodeId2);
+	void dfsLongest(const char* nodeId1, const char* nodeId2);
+	void dijkstra(const char* nodeId1, const char* nodeId2);
 };
 
 #endif

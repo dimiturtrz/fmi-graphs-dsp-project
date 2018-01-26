@@ -1,7 +1,10 @@
 #include <iostream>
 #include <fstream>
 
+#include "structures/Pair.h"
 #include "structures/Vector.h"
+#include "structures/Stack.h"
+#include "structures/Queue.h"
 #include "structures/BinarySearchTree.h"
 #include "helpers/MyStrings.h"
 #include "Graph.h"
@@ -170,4 +173,36 @@ void Graph::removeArc(const char* nodeId1, const char* nodeId2) {
 		node1->removeNeighbour(node2);
 	}
 }
+
+// ------------------------ SEARCH METHODS ------------------------
+
+void Graph::bfs(const char* nodeId1, const char* nodeId2) {
+	Node* node1 = nodes.getElement(nodeId1);
+	Node* node2 = nodes.getElement(nodeId2);
+
+	if(node1 == NULL || node2 == NULL) {
+		return;
+	}
+
+    BinarySearchTree<AlgorithmNode> optimalityTable;
+    for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
+		optimalityTable.add(AlgorithmNode(&(*iter)));
+	}
+
+    int depth = 0;
+    Queue< Pair<Node*, int> > bfsQueue;
+    bfsQueue.enqueue(Pair<Node*, int>(node1, depth));
+    while(!bfsQueue.isEmpty()) {
+        Node* topNode = bfsQueue.getFront().first;
+        if(topNode != node2) {
+            topNode->bfsVisit(bfsQueue, optimalityTable, depth);
+            bfsQueue.dequeue();
+        } else {
+            break;
+        }
+    }
+}
+void Graph::dfsShortest(const char* nodeId1, const char* nodeId2) {}
+void Graph::dfsLongest(const char* nodeId1, const char* nodeId2) {}
+void Graph::dijkstra(const char* nodeId1, const char* nodeId2) {}
 

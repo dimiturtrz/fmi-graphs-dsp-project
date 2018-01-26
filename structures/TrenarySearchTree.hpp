@@ -20,9 +20,11 @@ void TrenarySearchTree<T>::TSTNode::copy(const TrenarySearchTree<T>::TSTNode& ot
 
 template<typename T>
 TrenarySearchTree<T>::Iterator::Iterator(TSTNode* root): root(root), lastPop(NULL), lastVisited(NULL) {
-    iterationStack.push(root);
-	sink();
-	lastVisited = iterationStack.getTop();
+    if(root != NULL) {
+        iterationStack.push(root);
+        sink();
+        lastVisited = iterationStack.getTop();
+    }
 }
 
 template<typename T>

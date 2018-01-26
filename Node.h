@@ -1,12 +1,15 @@
 #include <iostream>
 #include <fstream>
 
+#include "structures/Pair.h"
+#include "structures/Queue.h"
 #include "structures/BinarySearchTree.h"
 
 #ifndef NODE
 #define NODE
 
 class EnumeratedNode;
+class AlgorithmNode;
 
 class Node {
 	struct Arc {
@@ -33,6 +36,8 @@ public:
 	void removeNeighbour(Node* node);
 
 	void writeToFile(std::ofstream& outputGraphFile, BinarySearchTree<EnumeratedNode> indexedNodes);
+
+	void bfsVisit(Queue< Pair<Node*, int> >, BinarySearchTree<AlgorithmNode> optimalityTable, int depth);
 };
 
 class EnumeratedNode {
@@ -47,6 +52,22 @@ public:
 	bool operator>(const EnumeratedNode& other);
 
 	int getIndex();
+};
+
+class AlgorithmNode {
+	Node* address;
+	Node* parentAddress;
+	int cost;
+
+public:
+	AlgorithmNode(Node* address);
+
+	bool operator==(const AlgorithmNode& other);
+	bool operator<(const AlgorithmNode& other);
+	bool operator>(const AlgorithmNode& other);
+
+	int getCost();
+	void changeOptimalReach(int newCost, Node* newParent);
 };
 
 #endif

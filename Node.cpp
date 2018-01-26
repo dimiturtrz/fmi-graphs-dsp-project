@@ -1,5 +1,8 @@
 #include "Node.h"
 
+#include "structures/Pair.h"
+#include "structures/Queue.h"
+
 // ---------------------------- ARC -----------------------------------
 Node::Arc::Arc(Node* end, int weight): end(end), weight(weight) {}
 
@@ -36,6 +39,29 @@ int EnumeratedNode::getIndex() {
 	return index;
 }
 
+// ------------------------- ALGORITHM NODE ---------------------------
+
+AlgorithmNode::AlgorithmNode(Node* address): cost(-1), address(address), parentAddress(NULL) {}
+
+bool AlgorithmNode::operator==(const AlgorithmNode& other) {
+    address == other.address;
+}
+bool AlgorithmNode::operator<(const AlgorithmNode& other) {
+    address < other.address;
+}
+bool AlgorithmNode::operator>(const AlgorithmNode& other) {
+    address > other.address;
+}
+
+int AlgorithmNode::getCost() {
+    return cost;
+}
+
+void AlgorithmNode::changeOptimalReach(int newCost, Node* newParent) {
+    cost = newCost;
+    parentAddress = newParent;
+}
+
 // ------------------------ NEIGHBOUR BST -----------------------------
 
 Node::Arc* Node::NeighboursBST::getNeighbour(Node* neighbour) {
@@ -55,7 +81,7 @@ void Node::writeToFile(std::ofstream& outputGraphFile, BinarySearchTree<Enumerat
 	for(NeighboursBST::Iterator iter = neighbours.begin(); !iter.isFinished(); ++iter) {
 		Arc arcToWrite = *iter;
 		int endNodeIndex = indexedNodes.getElement(EnumeratedNode(arcToWrite.end, -1))->getIndex();
-		outputGraphFile<< endNodeIndex<< " "<< arcToWrite.weight<< ", ";;
+		outputGraphFile<< endNodeIndex<< " "<< arcToWrite.weight<< ", ";
 	}
 }
 
@@ -65,9 +91,24 @@ bool Node::hasNeighbour(Node* neighbour) {
 }
 
 void Node::addNeighbour(Node* neighbour, int weight) {
-	neighbours.add(Arc(neighbour, weight));
+    if(neighbours.getNeighbour(neighbour) == NULL) {
+        neighbours.add(Arc(neighbour, weight));
+    }
 }
 
 void Node::removeNeighbour(Node* node) {
 	neighbours.removeNeighbour(node);
+}
+
+// --------------------------- ALGORITHMS ----------------------------
+
+void Node::bfsVisit(Queue< Pair<Node*, int> > queue, BinarySearchTree<AlgorithmNode> optimalityTable, int depth) {
+    for(NeighboursBST::Iterator iter = neighbours.begin(); !iter.isFinished(); ++iter) {
+        Node* endpoint = (*iter).end;
+        AlgorithmNode& algorithmNode = *(optimalityTable.getElement(AlgorithmNode(endpoint)));
+        if(algorithmNode.getCost() == -1) {
+            algorithmNode.changeOptimalReach(depth + 1, this);
+            queue.enqueue(Pair<Node*, int>(endpoint, depth + 1));
+        }
+    }
 }
