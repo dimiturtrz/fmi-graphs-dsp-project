@@ -113,25 +113,29 @@ void Node::removeNeighbour(Node* node) {
 
 // --------------------------- ALGORITHMS ----------------------------
 
-void Node::bfsVisit(Queue< Pair<Node*, int> >& queue, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth) {
+void Node::bfsVisit(Queue< Pair<Node*, int> >& queue, BinarySearchTree<AlgorithmNode>& optimalityTable) {
+    int currDepth = optimalityTable.getElement(AlgorithmNode(this))->getCost();
     for(NeighboursBST::Iterator iter = neighbours.begin(); !iter.isFinished(); ++iter) {
-        Node* endpoint = (*iter).end;
-        AlgorithmNode& algorithmNode = *(optimalityTable.getElement(AlgorithmNode(endpoint)));
+        Node* arcEndpoint = (*iter).end;
+        AlgorithmNode& algorithmNode = *(optimalityTable.getElement(AlgorithmNode(arcEndpoint)));
+        int newDepth = currDepth + 1;
         if(algorithmNode.getCost() == -1) {
-            algorithmNode.changeOptimalReach(depth + 1, this);
-            queue.enqueue(Pair<Node*, int>(endpoint, depth + 1));
+            algorithmNode.changeOptimalReach(newDepth, this);
+            queue.enqueue(Pair<Node*, int>(arcEndpoint, newDepth));
         }
     }
 }
 
-void Node::dfsShortVisit(Stack< Pair<Node*, int> >& stack, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth) {
+void Node::dfsShortVisit(Stack< Pair<Node*, int> >& stack, BinarySearchTree<AlgorithmNode>& optimalityTable) {
     stack.pop();
+    int currDepth = optimalityTable.getElement(AlgorithmNode(this))->getCost();
     for(NeighboursBST::Iterator iter = neighbours.begin(); !iter.isFinished(); ++iter) {
-        Node* endpoint = (*iter).end;
-        AlgorithmNode& algorithmNode = *(optimalityTable.getElement(AlgorithmNode(endpoint)));
-        if(algorithmNode.getCost() == -1 || algorithmNode.getCost() > depth + 1) {
-            algorithmNode.changeOptimalReach(depth + 1, this);
-            stack.push(Pair<Node*, int>(endpoint, depth + 1));
+        Node* arcEndpoint = (*iter).end;
+        AlgorithmNode& algorithmNode = *(optimalityTable.getElement(AlgorithmNode(arcEndpoint)));
+        int newDepth = currDepth + 1;
+        if(algorithmNode.getCost() == -1 || algorithmNode.getCost() > newDepth) {
+            algorithmNode.changeOptimalReach(newDepth, this);
+            stack.push(Pair<Node*, int>(arcEndpoint, newDepth));
         }
     }
 }

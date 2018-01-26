@@ -189,23 +189,19 @@ void Graph::bfs(const char* nodeId1, const char* nodeId2) {
 		optimalityTable.add(AlgorithmNode(&(*iter)));
 	}
 
-	bool pathFound = false;
-
-    int depth = 0;
     Queue< Pair<Node*, int> > bfsQueue;
-    bfsQueue.enqueue(Pair<Node*, int>(node1, depth));
+    bfsQueue.enqueue(Pair<Node*, int>(node1, 0));
     while(!bfsQueue.isEmpty()) {
         Node* topNode = bfsQueue.getFront().first;
         if(topNode != node2) {
-            topNode->bfsVisit(bfsQueue, optimalityTable, depth);
+            topNode->bfsVisit(bfsQueue, optimalityTable);
             bfsQueue.dequeue();
         } else {
-            pathFound = true;
             break;
         }
     }
 
-    if(!pathFound) {
+    if(optimalityTable.getElement(AlgorithmNode(node2))->getParentAddress() == NULL) {
         std::cout<< "no path found"<< std::endl;
         return;
     }
@@ -247,13 +243,12 @@ void Graph::dfsShortest(const char* nodeId1, const char* nodeId2) {
 	}
 	optimalityTable.getElement(AlgorithmNode(node1))->changeOptimalReach(0, NULL);
 
-    int depth = 0;
     Stack< Pair<Node*, int> > dfsStack;
-    dfsStack.push(Pair<Node*, int>(node1, depth));
+    dfsStack.push(Pair<Node*, int>(node1, 0));
     while(!dfsStack.isEmpty()) {
         Node* topNode = dfsStack.getTop().first;
         if(topNode != node2) {
-            topNode->dfsShortVisit(dfsStack, optimalityTable, depth);
+            topNode->dfsShortVisit(dfsStack, optimalityTable);
         } else {
             break;
         }
