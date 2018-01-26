@@ -351,13 +351,13 @@ void Graph::dijkstra(const char* nodeId1, const char* nodeId2) {
     for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
 		optimalityTable.add(AlgorithmNode(&(*iter)));
 	}
+	optimalityTable.getElement(AlgorithmNode(node1))->changeOptimalReach(0, NULL);
 
-    int depth = 0;
     Queue< Pair<Node*, int> > bfsQueue;
-    bfsQueue.enqueue(Pair<Node*, int>(node1, depth));
+    bfsQueue.enqueue(Pair<Node*, int>(node1, 0));
     while(!bfsQueue.isEmpty()) {
         Node* topNode = bfsQueue.getFront().first;
-        topNode->dijkstraVisit(bfsQueue, optimalityTable, depth);
+        topNode->dijkstraVisit(bfsQueue, optimalityTable);
         bfsQueue.dequeue();
     }
 

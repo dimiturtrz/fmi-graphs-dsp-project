@@ -141,20 +141,22 @@ void Node::dfsLongVisit(Stack< Pair<Node*, int> >& stack, BinarySearchTree<Algor
     for(NeighboursBST::Iterator iter = neighbours.begin(); !iter.isFinished(); ++iter) {
         Node* endpoint = (*iter).end;
         AlgorithmNode& algorithmNode = *(optimalityTable.getElement(AlgorithmNode(endpoint)));
-        if(algorithmNode.getCost() < depth + 1) {
+        if(algorithmNode.getCost() < depth) {
             algorithmNode.changeOptimalReach(depth + 1, this);
             stack.push(Pair<Node*, int>(endpoint, depth + 1));
         }
     }
 }
 
-void Node::dijkstraVisit(Queue< Pair<Node*, int> >& queue, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth) {
+void Node::dijkstraVisit(Queue< Pair<Node*, int> >& queue, BinarySearchTree<AlgorithmNode>& optimalityTable) {
+    int currCost = optimalityTable.getElement(AlgorithmNode(this))->getCost();
     for(NeighboursBST::Iterator iter = neighbours.begin(); !iter.isFinished(); ++iter) {
-        Node* endpoint = (*iter).end;
-        AlgorithmNode& algorithmNode = *(optimalityTable.getElement(AlgorithmNode(endpoint)));
-        if(algorithmNode.getCost() == -1 || algorithmNode.getCost() > depth + (*iter).weight) {
-            algorithmNode.changeOptimalReach(depth + (*iter).weight, this);
-            queue.enqueue(Pair<Node*, int>(endpoint, depth + (*iter).weight));
+        Node* arcEndpoint = (*iter).end;
+        AlgorithmNode& algorithmNode = *(optimalityTable.getElement(AlgorithmNode(arcEndpoint)));
+        int newCost = currCost + (*iter).weight;
+        if(algorithmNode.getCost() == -1 || algorithmNode.getCost() > newCost) {
+            algorithmNode.changeOptimalReach(newCost, this);
+            queue.enqueue(Pair<Node*, int>(arcEndpoint, newCost);
         }
     }
 }

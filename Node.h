@@ -41,7 +41,7 @@ public:
 	void bfsVisit(Queue< Pair<Node*, int> >& queue, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth);
 	void dfsShortVisit(Stack< Pair<Node*, int> >& stack, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth);
 	void dfsLongVisit(Stack< Pair<Node*, int> >& stack, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth);
-	void dijkstraVisit(Queue< Pair<Node*, int> >& queue, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth);
+	void dijkstraVisit(Queue< Pair<Node*, int> >& queue, BinarySearchTree<AlgorithmNode>& optimalityTable);
 };
 
 class EnumeratedNode {
