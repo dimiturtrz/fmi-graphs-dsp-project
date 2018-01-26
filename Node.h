@@ -37,7 +37,7 @@ public:
 
 	void writeToFile(std::ofstream& outputGraphFile, BinarySearchTree<EnumeratedNode> indexedNodes);
 
-	void bfsVisit(Queue< Pair<Node*, int> >, BinarySearchTree<AlgorithmNode> optimalityTable, int depth);
+	void bfsVisit(Queue< Pair<Node*, int> >& queue, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth);
 };
 
 class EnumeratedNode {
@@ -63,10 +63,13 @@ public:
 	AlgorithmNode(Node* address);
 
 	bool operator==(const AlgorithmNode& other);
+	bool operator!=(const AlgorithmNode& other);
 	bool operator<(const AlgorithmNode& other);
 	bool operator>(const AlgorithmNode& other);
 
 	int getCost();
+    Node* getAddress();
+    Node* getParentAddress();
 	void changeOptimalReach(int newCost, Node* newParent);
 };
 

@@ -44,17 +44,28 @@ int EnumeratedNode::getIndex() {
 AlgorithmNode::AlgorithmNode(Node* address): cost(-1), address(address), parentAddress(NULL) {}
 
 bool AlgorithmNode::operator==(const AlgorithmNode& other) {
-    address == other.address;
+    return address == other.address;
+}
+bool AlgorithmNode::operator!=(const AlgorithmNode& other) {
+    return *this != other;
 }
 bool AlgorithmNode::operator<(const AlgorithmNode& other) {
-    address < other.address;
+    return address < other.address;
 }
 bool AlgorithmNode::operator>(const AlgorithmNode& other) {
-    address > other.address;
+    return address > other.address;
 }
 
 int AlgorithmNode::getCost() {
     return cost;
+}
+
+Node* AlgorithmNode::getAddress() {
+    return address;
+}
+
+Node* AlgorithmNode::getParentAddress() {
+    return parentAddress;
 }
 
 void AlgorithmNode::changeOptimalReach(int newCost, Node* newParent) {
@@ -102,7 +113,7 @@ void Node::removeNeighbour(Node* node) {
 
 // --------------------------- ALGORITHMS ----------------------------
 
-void Node::bfsVisit(Queue< Pair<Node*, int> > queue, BinarySearchTree<AlgorithmNode> optimalityTable, int depth) {
+void Node::bfsVisit(Queue< Pair<Node*, int> >& queue, BinarySearchTree<AlgorithmNode>& optimalityTable, int depth) {
     for(NeighboursBST::Iterator iter = neighbours.begin(); !iter.isFinished(); ++iter) {
         Node* endpoint = (*iter).end;
         AlgorithmNode& algorithmNode = *(optimalityTable.getElement(AlgorithmNode(endpoint)));

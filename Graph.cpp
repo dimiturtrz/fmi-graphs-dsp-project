@@ -189,6 +189,8 @@ void Graph::bfs(const char* nodeId1, const char* nodeId2) {
 		optimalityTable.add(AlgorithmNode(&(*iter)));
 	}
 
+	bool pathFound = false;
+
     int depth = 0;
     Queue< Pair<Node*, int> > bfsQueue;
     bfsQueue.enqueue(Pair<Node*, int>(node1, depth));
@@ -198,9 +200,38 @@ void Graph::bfs(const char* nodeId1, const char* nodeId2) {
             topNode->bfsVisit(bfsQueue, optimalityTable, depth);
             bfsQueue.dequeue();
         } else {
+            pathFound = true;
             break;
         }
     }
+
+    if(!pathFound) {
+        std::cout<< "no path found"<< std::endl;
+        return;
+    }
+    std::cout<< "path found: "<< std::endl;
+
+    Stack<Node*> pathStack;
+    AlgorithmNode pathElement = *(optimalityTable.getElement(AlgorithmNode(node2)));
+    while(pathElement.getAddress() != node1) {
+        pathStack.push(pathElement.getAddress());
+        pathElement = *(optimalityTable.getElement(AlgorithmNode(pathElement.getParentAddress())));
+    }
+    pathStack.push(pathElement.getAddress());
+
+    char nodeName[51];
+    while(!pathStack.isEmpty()) {
+        for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
+            if(&(*iter) == pathStack.getTop()) {
+                iter.getWord(nodeName);
+                std::cout<< nodeName<< " ";
+                pathStack.pop();
+                break;
+            }
+        }
+    }
+    std::cout<< std::endl;
+
 }
 void Graph::dfsShortest(const char* nodeId1, const char* nodeId2) {}
 void Graph::dfsLongest(const char* nodeId1, const char* nodeId2) {}

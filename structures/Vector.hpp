@@ -1,4 +1,5 @@
-
+#ifndef VECTOR_HPP
+#define VECTOR_HPP
 
 // -------------------------- BIG FOUR HELPERS ------------------------------
 template<typename T>
@@ -113,3 +114,5 @@ template<typename T>
 int Vector<T>::getSize() {
 	return size;
 }
+
+#endif

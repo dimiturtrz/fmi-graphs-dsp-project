@@ -240,7 +240,7 @@ void BinarySearchTree<T>::printSubtree(BSTNode* currRoot) {
 
 template<typename T>
 T* BinarySearchTree<T>::getElement(const T& data) {
-	getElement(data, root);
+	return getElement(data, root);
 }
 
 template<typename T>
