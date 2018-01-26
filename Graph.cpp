@@ -245,8 +245,7 @@ void Graph::dfsShortest(const char* nodeId1, const char* nodeId2) {
     for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
 		optimalityTable.add(AlgorithmNode(&(*iter)));
 	}
-
-	bool pathFound = false;
+	optimalityTable.getElement(AlgorithmNode(node1))->changeOptimalReach(0, NULL);
 
     int depth = 0;
     Stack< Pair<Node*, int> > dfsStack;
@@ -256,12 +255,11 @@ void Graph::dfsShortest(const char* nodeId1, const char* nodeId2) {
         if(topNode != node2) {
             topNode->dfsShortVisit(dfsStack, optimalityTable, depth);
         } else {
-            pathFound = true;
             break;
         }
     }
 
-    if(!pathFound) {
+    if(optimalityTable.getElement(AlgorithmNode(node2))->getParentAddress() == NULL) {
         std::cout<< "no path found"<< std::endl;
         return;
     }
@@ -300,15 +298,13 @@ void Graph::dfsLongest(const char* nodeId1, const char* nodeId2) {
     for(TrenarySearchTree<Node>::Iterator iter = nodes.begin(); !iter.isFinished(); ++iter) {
 		optimalityTable.add(AlgorithmNode(&(*iter)));
 	}
+	optimalityTable.getElement(AlgorithmNode(node1))->changeOptimalReach(0, NULL);
 
-	bool pathFound = false;
-
-    int depth = 0;
     Stack< Pair<Node*, int> > dfsStack;
-    dfsStack.push(Pair<Node*, int>(node1, depth));
+    dfsStack.push(Pair<Node*, int>(node1, 0));
     while(!dfsStack.isEmpty()) {
         Node* topNode = dfsStack.getTop().first;
-        topNode->dfsLongVisit(dfsStack, optimalityTable, depth);
+        topNode->dfsLongVisit(dfsStack, optimalityTable);
     }
 
     if(optimalityTable.getElement(AlgorithmNode(node2))->getParentAddress() == NULL) {
